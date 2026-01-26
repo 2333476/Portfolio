@@ -1,3 +1,6 @@
+
+const express = require("express");
+const app = express();
 const prisma = require("./lib/prisma");
 
 app.get("/api/db-check", async (req, res) => {
@@ -8,3 +11,5 @@ app.get("/api/db-check", async (req, res) => {
     res.status(500).json({ db: "error", message: err?.message ?? "Unknown error" });
   }
 });
+
+module.exports = app;

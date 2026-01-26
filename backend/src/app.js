@@ -1,25 +1,10 @@
-const express = require("express");
-const cors = require("cors");
+const prisma = require("./lib/prisma");
 
-const app = express();
-
-app.use(cors({ origin: true }));
-app.use(express.json());
-
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
-});
-
-app.get("/api/skills", async (req, res) => {
+app.get("/api/db-check", async (req, res) => {
   try {
-    const skills = await prisma.skill.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    res.json(skills);
+    await prisma.skill.count(); // ou un model qui existe
+    res.json({ db: "ok" });
   } catch (err) {
-    res.status(500).json({ message: err?.message ?? "Error" });
+    res.status(500).json({ db: "error", message: err?.message ?? "Unknown error" });
   }
 });
-
-
-module.exports = app;

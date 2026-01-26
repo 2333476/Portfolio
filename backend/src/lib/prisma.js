@@ -4,12 +4,8 @@ const globalForPrisma = globalThis;
 
 const prisma =
   globalForPrisma.__prisma ??
-  new PrismaClient({
-    // log: ["query"], // décommenter si tu veux debug
-  });
+  new PrismaClient();
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.__prisma = prisma;
-}
+if (process.env.NODE_ENV !== "production") globalForPrisma.__prisma = prisma;
 
 module.exports = prisma;

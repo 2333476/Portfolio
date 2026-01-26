@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# env files (SECRETS)
+.env
+.env.*
+
+# build outputs
+dist/
+build/
+.next/
+out/
+
+# prisma generated
+.prisma/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

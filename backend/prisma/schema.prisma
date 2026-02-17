@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -7,12 +8,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String // Will store hashed password
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  titleEn     String
+  titleFr     String
+  descEn      String
+  descFr      String
+  techStack   String[] // Array of strings for technologies
+  demoLink    String?
+  repoLink    String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  company     String
+  roleEn      String
+  roleFr      String
+  period      String   // e.g. "Jan 2023 - Present"
+  descEn      String   // Using text for bullets if needed
+  descFr      String
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Education {
+  id            String   @id @default(uuid())
+  institution   String
+  degreeEn      String
+  degreeFr      String
+  startDate     DateTime @default(now()) // Default to allow migration, user will update
+  endDate       DateTime? // Nullable for "Present"
+  descriptionEn String   @default("") // For detailed courses/achievements
+  descriptionFr String   @default("")
+  logoUrl       String?
+  createdAt     DateTime @default(now())
+}
+
 model Skill {
-  id        String   @id
+  id        String   @id @default(uuid())
   nameEn    String
   nameFr    String
-  level     Int
-  category  String
+  level     Int      // 1-100 or 1-5
+  category  String   // Frontend, Backend, Tools
+  imageUrl  String?  // URL to Devicon or uploaded image
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  author    String
+  role      String?
+  contentEn String
+  contentFr String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Resume {
+  id        String   @id @default(uuid())
+  fileUrl   String
+  updatedAt DateTime @updatedAt
+}
+
+model Hobby {
+  id        String   @id @default(uuid())
+  nameEn    String
+  nameFr    String
+  image     String?
+  createdAt DateTime @default(now())
+}
+
+
+model Certification {
+  id        String   @id @default(uuid())
+  nameEn    String
+  nameFr    String
+  issuer    String
+  date      String   // e.g. "Nov 2022"
+  url       String?
+  imageUrl  String?
+  logoUrl   String? // For issuer logo if distinct from certificaiton image
+  createdAt DateTime @default(now())
 }

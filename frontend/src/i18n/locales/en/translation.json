@@ -1,0 +1,171 @@
+{
+    "nav": {
+        "home": "Home",
+        "about": "About",
+        "work": "Work",
+        "education": "Education",
+        "projects": "Projects",
+        "testimonials": "Testimonials",
+        "contact": "Contact",
+        "certifications": "Certifications",
+        "skills": "Skills"
+    },
+    "hero": {
+        "title": "Hi, I'm Isaac",
+        "subtitle": "Full-Stack Developer & Software Engineering Student",
+        "cta_projects": "View Projects",
+        "cta_contact": "Contact Me",
+        "greeting": "Hi, I'm",
+        "roles": [
+            "A Tech Enthusiast",
+            "A Software Engineer",
+            "A Full Stack Developer",
+            "A Creative Problem Solver"
+        ],
+        "tagline": "Building accessible, pixel-perfect, and performant web experiences.",
+        "download_cv": "Download CV",
+        "view_cv": "View CV",
+        "resume_not_found": "Resume not uploaded yet"
+    },
+    "about_section": {
+        "title": "Beyond the Code",
+        "subtitle": "I'm not just a developer; I'm a problem solver, a gamer, and a lifelong learner. Here's a glimpse into my world.",
+        "who_i_am": "Who I Am",
+        "bio": "I am a passionate <1>Full Stack Developer</1> based in Montreal. I specialize in building scalable web applications and intuitive user interfaces. My journey started with a curiosity for how things work, and now I architect digital solutions.",
+        "based_in": "Based In",
+        "edu_title": "Education",
+        "degree": "B.Sc. Computer Science",
+        "university": "University of Montreal",
+        "clean_code": "Clean Code",
+        "code_tagline": "Architecture enthusiast & Best practices advocate.",
+        "hobbies": "Hobbies",
+        "hobby_list": [
+            "Gaming",
+            "Photography",
+            "Travel",
+            "Reading"
+        ]
+    },
+    "about_page": {
+        "welcome": "Welcome! Thanks for taking the time to check out my website.",
+        "cmd_about": "about_me",
+        "name": "My name is Isaac Nachate",
+        "location": "Full Stack Developer based in Montreal, Canada.",
+        "passion": "Passionate about building pixel-perfect web experiences.",
+        "cmd_strengths": "current_strengths",
+        "skills": "React, Node.js, TypeScript, Spring Boot, AWS, AI Integration.",
+        "blend": "Strong blend of technical skills and creative design.",
+        "cv_note": "Always learning - Download my CV to learn more.",
+        "connect": "Always looking to connect!"
+    },
+    "skills_page": {
+        "title": "Skills & Expertise",
+        "subtitle": "My technical arsenal and proficiencies.",
+        "cat_frontend": "Frontend",
+        "cat_backend": "Backend",
+        "cat_tools": "Tools",
+        "cat_other": "Other",
+        "development": "Development",
+        "back": "Back to Categories",
+        "skills_count": "Skills"
+    },
+    "certifications": {
+        "title": "Certifications",
+        "subtitle": "Professional credentials and licenses."
+    },
+    "testimonials": {
+        "title": "Testimonials",
+        "subtitle": "What people say about working with me.",
+        "write_btn": "Write a Testimonial",
+        "no_testimonials": "No testimonials yet. Be the first to leave one!",
+        "thank_you": "Thank You!",
+        "success_msg": "Your testimonial has been submitted and is pending approval.",
+        "form_name": "Your Name",
+        "form_role": "Role / Company (Optional)",
+        "form_msg": "Message",
+        "form_cancel": "Cancel",
+        "form_submit": "Submit",
+        "modal_close": "Close",
+        "chars": "chars"
+    },
+    "contact_modal": {
+        "info_title": "Contact Info",
+        "form_title": "Send a Message",
+        "form_subtitle": "Have a project in mind? Let's work together.",
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "placeholder_msg": "Tell me about your project...",
+        "send_btn": "Send Message",
+        "email_copied": "Email copied!",
+        "success_msg": "Message sent successfully!",
+        "fax_label": "Fax Number"
+    },
+    "projects_section": {
+        "title": "Featured Projects",
+        "subtitle": "Swipe or click to navigate.",
+        "visit_site": "Visit Site"
+    },
+    "skills": {
+        "title": "Technical Arsenal",
+        "subtitle": "Constantly expanding my stack.",
+        "no_skills": "No skills added yet.",
+        "loading": "Loading...",
+        "dive_in": "Click to Dive In",
+        "immersive_subtitle": "Click to explore the depths of my stack."
+    },
+    "work": {
+        "title": "Work Experience",
+        "no_experience": "No Experience Added Yet"
+    },
+    "education": {
+        "title": "Education",
+        "subtitle": "My academic background, degrees, and certifications.",
+        "no_education": "No Education Found",
+        "no_details": "No details provided.",
+        "period_label": "Period",
+        "highlights": "Highlights & Coursework"
+    },
+    "contact": {
+        "title": "Get In Touch",
+        "subtitle": "Have a project in mind? Let's work together.",
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "placeholder_msg": "Tell me about your project...",
+        "send": "Send Message",
+        "sending": "Sending...",
+        "success_title": "Message Sent!",
+        "success_body": "I'll get back to you as soon as possible.",
+        "send_another": "Send another",
+        "error": "Something went wrong. Please try again."
+    },
+    "projects": {
+        "title": "Selected Projects",
+        "view_demo": "View Demo",
+        "view_repo": "View Repo",
+        "no_projects": "No Projects Found",
+        "timeline_title": "Project Timeline",
+        "timeline_subtitle": "A chronological journey through my development work. Scroll horizontally to explore.",
+        "live_demo": "Live Demo",
+        "code": "Code"
+    },
+    "chat": {
+        "lumi_name": "Lumi AI",
+        "online": "Online",
+        "thinking": "Thinking...",
+        "input_placeholder": "Ask Lumi anything...",
+        "tooltip": "Chat with Lumi!",
+        "welcome_msg": "Hi there! I'm Lumi, Isaac's virtual assistant. Ask me anything! ✨",
+        "error_msg": "My connection is a bit fuzzy. Can you try again?"
+    },
+    "common": {
+        "view_more": "View More",
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "submit": "Submit",
+        "cancel": "Cancel"
+    }
+}

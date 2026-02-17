@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    container_name: portfolio-backend
+    env_file:
+      - .env.local
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    depends_on: []
+
+# Neon is cloud, so no local DB container needed
+# DATABASE_URL in .env.local doit pointer vers la branche dev de Neon

@@ -15,6 +15,6 @@ const PORT = process.env.PORT || 3001;
 // when the server starts, log a message to the console
 // the app variable is an express application that handles requests
 // we pass the app variable to the listen method to handle incoming requests
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`API running on http://localhost:${PORT}`);
 });

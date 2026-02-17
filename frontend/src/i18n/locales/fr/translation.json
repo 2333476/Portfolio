@@ -1,0 +1,171 @@
+{
+    "nav": {
+        "home": "Accueil",
+        "about": "À Propos",
+        "work": "Expérience",
+        "education": "Formation",
+        "projects": "Projets",
+        "testimonials": "Témoignages",
+        "contact": "Contact",
+        "certifications": "Certifications",
+        "skills": "Compétences"
+    },
+    "hero": {
+        "title": "Salut, je suis Isaac",
+        "subtitle": "Développeur Full-Stack & Étudiant en Génie Logiciel",
+        "cta_projects": "Voir Projets",
+        "cta_contact": "Me Contacter",
+        "greeting": "Salut, je suis",
+        "roles": [
+            "Un Passionné de Tech",
+            "Un Ingénieur Logiciel",
+            "Un Développeur Full Stack",
+            "Un Solutionneur Créatif"
+        ],
+        "tagline": "Création d'expériences web accessibles, pixel-perfect et performantes.",
+        "download_cv": "Télécharger CV",
+        "view_cv": "Voir CV",
+        "resume_not_found": "CV non encore téléchargé"
+    },
+    "about_section": {
+        "title": "Au-delà du Code",
+        "subtitle": "Je ne suis qu'un développeur ; je suis un solutionneur, un gamer et un apprenant à vie. Voici un aperçu de mon monde.",
+        "who_i_am": "Qui je suis",
+        "bio": "Je suis un <1>Développeur Full Stack</1> passionné basé à Montréal. Je me spécialise dans la création d'applications web évolutives et d'interfaces utilisateur intuitives. Mon parcours a commencé par une curiosité pour le fonctionnement des choses, et maintenant j'architecture des solutions numériques.",
+        "based_in": "Basé à",
+        "edu_title": "Formation",
+        "degree": "B.Sc. Informatique",
+        "university": "Université de Montréal",
+        "clean_code": "Code Propre",
+        "code_tagline": "Passionné d'architecture et défenseur des meilleures pratiques.",
+        "hobbies": "Loisirs",
+        "hobby_list": [
+            "Gaming",
+            "Photographie",
+            "Voyage",
+            "Lecture"
+        ]
+    },
+    "about_page": {
+        "welcome": "Bienvenue ! Merci de prendre le temps de consulter mon site.",
+        "cmd_about": "a_propos",
+        "name": "Je m'appelle Isaac Nachate",
+        "location": "Développeur Full Stack basé à Montréal, Canada.",
+        "passion": "Passionné par la création d'expériences web parfaites.",
+        "cmd_strengths": "forces_actuelles",
+        "skills": "React, Node.js, TypeScript, Spring Boot, AWS, Intégration IA.",
+        "blend": "Mélange solide de compétences techniques et de design créatif.",
+        "cv_note": "Toujours en apprentissage - Téléchargez mon CV pour en savoir plus.",
+        "connect": "Toujours ravi de discuter !"
+    },
+    "skills_page": {
+        "title": "Compétences & Expertise",
+        "subtitle": "Mon arsenal technique et mes compétences.",
+        "cat_frontend": "Frontend",
+        "cat_backend": "Backend",
+        "cat_tools": "Outils",
+        "cat_other": "Autre",
+        "development": "Développement",
+        "back": "Retour aux Catégories",
+        "skills_count": "Compétences"
+    },
+    "certifications": {
+        "title": "Certifications",
+        "subtitle": "Titres et licences professionnels."
+    },
+    "testimonials": {
+        "title": "Témoignages",
+        "subtitle": "Ce que les gens disent de notre collaboration.",
+        "write_btn": "Écrire un Témoignage",
+        "no_testimonials": "Aucun témoignage pour le moment. Soyez le premier !",
+        "thank_you": "Merci !",
+        "success_msg": "Votre témoignage a été soumis et est en attente d'approbation.",
+        "form_name": "Votre Nom",
+        "form_role": "Rôle / Entreprise (Optionnel)",
+        "form_msg": "Message",
+        "form_cancel": "Annuler",
+        "form_submit": "Soumettre",
+        "modal_close": "Fermer",
+        "chars": "caractères"
+    },
+    "contact_modal": {
+        "info_title": "Contact Info",
+        "form_title": "Envoyer un Message",
+        "form_subtitle": "Un projet en tête? Travaillons ensemble.",
+        "name": "Nom",
+        "email": "Email",
+        "subject": "Sujet",
+        "message": "Message",
+        "placeholder_msg": "Parlez-moi de votre projet...",
+        "send_btn": "Envoyer le Message",
+        "email_copied": "Email copié !",
+        "success_msg": "Message envoyé avec succès !",
+        "fax_label": "Numéro de Fax"
+    },
+    "projects_section": {
+        "title": "Projets Phares",
+        "subtitle": "Balayez ou cliquez pour naviguer.",
+        "visit_site": "Visiter le Site"
+    },
+    "skills": {
+        "title": "Arsenal Technique",
+        "subtitle": "Élargissant constamment mon stack.",
+        "no_skills": "Aucune compétence ajoutée pour le moment.",
+        "loading": "Chargement...",
+        "dive_in": "Cliquez pour Plonger",
+        "immersive_subtitle": "Cliquez pour explorer les profondeurs de mon stack."
+    },
+    "work": {
+        "title": "Expérience Professionnelle",
+        "no_experience": "Aucune expérience ajoutée pour le moment"
+    },
+    "education": {
+        "title": "Formation",
+        "subtitle": "Mon parcours académique, diplômes et certifications.",
+        "no_education": "Aucune formation trouvée",
+        "no_details": "Aucun détail fourni.",
+        "period_label": "Période",
+        "highlights": "Points Forts & Cours"
+    },
+    "contact": {
+        "title": "Contactez-moi",
+        "subtitle": "Un projet en tête? Travaillons ensemble.",
+        "name": "Nom",
+        "email": "Email",
+        "subject": "Sujet",
+        "message": "Message",
+        "placeholder_msg": "Parlez-moi de votre projet...",
+        "send": "Envoyer le Message",
+        "sending": "Envoi...",
+        "success_title": "Message Envoyé !",
+        "success_body": "Je vous répondrai dès que possible.",
+        "send_another": "Envoyer un autre",
+        "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "projects": {
+        "title": "Projets Sélectionnés",
+        "view_demo": "Voir Démo",
+        "view_repo": "Voir Repo",
+        "no_projects": "Aucun projet trouvé",
+        "timeline_title": "Chronologie des Projets",
+        "timeline_subtitle": "Un voyage chronologique à travers mes travaux de développement. Faites défiler horizontalement pour explorer.",
+        "live_demo": "Démo Live",
+        "code": "Code"
+    },
+    "chat": {
+        "lumi_name": "Lumi AI",
+        "online": "En ligne",
+        "thinking": "Réflexion...",
+        "input_placeholder": "Demandez n'importe quoi à Lumi...",
+        "tooltip": "Discutez avec Lumi !",
+        "welcome_msg": "Salut ! Je suis Lumi, l'assistant virtuel d'Isaac. Demandez-moi n'importe quoi ! ✨",
+        "error_msg": "Ma connexion est un peu floue. Pouvez-vous réessayer ?"
+    },
+    "common": {
+        "view_more": "Voir Plus",
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "submit": "Envoyer",
+        "cancel": "Annuler"
+    }
+}

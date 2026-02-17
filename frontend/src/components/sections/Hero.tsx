@@ -148,13 +148,14 @@ export default function Hero() {
                         </button>
                         <a
                             href={resumeUrl || '#'}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             onClick={(e) => {
                                 if (!resumeUrl) {
                                     e.preventDefault();
                                     showToast(t('hero.resume_not_found'), 'info');
                                 }
                             }}
-                            download={resumeUrl ? "resume.pdf" : undefined}
                             className={`px-6 py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-black font-bold hover:bg-gray-800 dark:hover:bg-gray-200 transition-all flex items-center gap-2 text-sm md:text-base cursor-pointer shadow-lg hover:shadow-xl ${!resumeUrl ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                         >
                             <FaFileDownload /> {t('hero.download_cv')}

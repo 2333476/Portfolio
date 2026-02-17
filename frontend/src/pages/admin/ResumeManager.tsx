@@ -187,7 +187,8 @@ export default function ResumeManager() {
                                 <div className="flex items-center gap-2">
                                     <a
                                         href={resume.fileUrl}
-                                        download="resume.pdf"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
                                         title="Download"
                                     >

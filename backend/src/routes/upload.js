@@ -30,8 +30,9 @@ router.post('/', requireAuth, upload.single('image'), (req, res) => {
         // Return the Cloudinary secure URL
         res.json({
             success: true,
-            url: req.file.path, // This is the Cloudinary URL
-            filename: req.file.filename
+            url: req.file.path, // multer-storage-cloudinary puts the secure_url here by default if configured
+            filename: req.file.filename,
+            format: req.file.format
         });
     } catch (err) {
         console.error("Upload error:", err);

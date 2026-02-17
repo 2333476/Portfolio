@@ -39,13 +39,14 @@ export default function FloatingControls() {
                         <>
                             <a
                                 href={resumeUrl || '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 onClick={(e) => {
                                     if (!resumeUrl) {
                                         e.preventDefault();
                                         showToast(t('hero.resume_not_found'), 'info');
                                     }
                                 }}
-                                download={resumeUrl ? "resume.pdf" : undefined}
                                 className={`bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full font-medium flex items-center gap-2 shadow-lg shadow-purple-900/20 transition-all hover:scale-105 ${!resumeUrl ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
                                 <Download size={18} />

@@ -17,6 +17,9 @@ const SKILL_MAP: Record<string, string> = {
     'node': 'logos:nodejs-icon', 'nodejs': 'logos:nodejs-icon',
     'python': 'logos:python', 'py': 'logos:python',
     'java': 'logos:java',
+    'auth0': 'logos:auth0-icon',
+    'vercel': 'logos:vercel-icon',
+    'azure': 'logos:microsoft-azure',
     'php': 'logos:php',
     'go': 'logos:go',
     'rust': 'logos:rust',
@@ -38,6 +41,7 @@ const SKILL_MAP: Record<string, string> = {
     'spring': 'logos:spring-icon', 'springboot': 'logos:spring-icon', 'spring-boot': 'logos:spring-icon',
     'fastapi': 'logos:fastapi-icon',
     'flask': 'logos:flask',
+    'express': 'logos:express',
     'oauth': 'logos:oauth',
 };
 

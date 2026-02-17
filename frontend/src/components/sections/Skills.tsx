@@ -9,6 +9,7 @@ interface Skill {
     nameFr: string;
     category: string;
     level: number;
+    imageUrl?: string;
 }
 
 export default function Skills() {
@@ -64,7 +65,13 @@ export default function Skills() {
                         >
                             {[...row1, ...row1, ...row1].map((skill, i) => (
                                 <div key={`${skill.id}-${i}-r1`} className="flex-shrink-0 bg-white/5 border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3 hover:bg-white/10 transition-colors">
-                                    <span className="text-green-400 font-bold text-xl">#</span>
+                                    <div className="w-8 h-8 flex items-center justify-center p-1 bg-white/5 rounded">
+                                        {skill.imageUrl ? (
+                                            <img src={skill.imageUrl} alt="" className="w-full h-full object-contain" />
+                                        ) : (
+                                            <span className="text-green-400 font-bold">#</span>
+                                        )}
+                                    </div>
                                     <span className="text-white font-medium text-lg">{isEn ? skill.nameEn : skill.nameFr}</span>
                                 </div>
                             ))}
@@ -80,7 +87,13 @@ export default function Skills() {
                         >
                             {[...row2, ...row2, ...row2].map((skill, i) => (
                                 <div key={`${skill.id}-${i}-r2`} className="flex-shrink-0 bg-white/5 border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3 hover:bg-white/10 transition-colors">
-                                    <div className="w-2 h-2 rounded-full bg-purple-500" />
+                                    <div className="w-8 h-8 flex items-center justify-center p-1 bg-white/5 rounded">
+                                        {skill.imageUrl ? (
+                                            <img src={skill.imageUrl} alt="" className="w-full h-full object-contain" />
+                                        ) : (
+                                            <div className="w-2 h-2 rounded-full bg-purple-500" />
+                                        )}
+                                    </div>
                                     <span className="text-white font-medium text-lg">{isEn ? skill.nameEn : skill.nameFr}</span>
                                 </div>
                             ))}

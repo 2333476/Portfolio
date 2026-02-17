@@ -12,6 +12,7 @@ interface Skill {
     nameFr: string;
     category: string;
     level: number;
+    imageUrl?: string;
 }
 
 export default function SkillsImmersive() {
@@ -175,10 +176,18 @@ const Bubble = ({ skill, index, isEn }: { skill: Skill, index: number, isEn: boo
                 marginTop: `${visuals.marginY}px`,
             }}
         >
-            <Icon
-                icon={iconName}
-                className="w-8 h-8 md:w-12 md:h-12 mb-2 object-contain filter drop-shadow-md text-white"
-            />
+            {skill.imageUrl ? (
+                <img
+                    src={skill.imageUrl}
+                    alt=""
+                    className="w-8 h-8 md:w-12 md:h-12 mb-2 object-contain filter drop-shadow-md"
+                />
+            ) : (
+                <Icon
+                    icon={iconName}
+                    className="w-8 h-8 md:w-12 md:h-12 mb-2 object-contain filter drop-shadow-md text-white"
+                />
+            )}
             <span className="text-white font-bold text-xs md:text-sm pointer-events-none select-none">{isEn ? skill.nameEn : skill.nameFr}</span>
 
             <div className="w-12 h-1 bg-white/20 rounded-full mt-2 overflow-hidden pointer-events-none opacity-50">

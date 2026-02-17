@@ -25,6 +25,25 @@ interface DeviconSkill {
     aliases: string[];
 }
 
+const PRESET_SKILLS = [
+    { name: 'Auth0', icon: 'logos:auth0-icon' },
+    { name: 'Express', icon: 'logos:express' },
+    { name: 'Vercel', icon: 'logos:vercel-icon' },
+    { name: 'Azure', icon: 'logos:microsoft-azure' },
+    { name: 'Java', icon: 'logos:java' },
+    { name: 'Spring', icon: 'logos:spring-icon' },
+];
+
+interface UnifiedSuggestion {
+    name: string;
+    displayName?: string;
+    source: 'devicon' | 'iconify' | 'preset';
+    versions?: {
+        svg: string[];
+    };
+    tags?: string[];
+}
+
 export default function SkillsManager() {
     const { showToast } = useToast();
     const [skills, setSkills] = useState<Skill[]>([]);
@@ -34,7 +53,7 @@ export default function SkillsManager() {
 
     // Devicon Data
     const [deviconData, setDeviconData] = useState<DeviconSkill[]>([]);
-    const [suggestions, setSuggestions] = useState<DeviconSkill[]>([]);
+    const [suggestions, setSuggestions] = useState<UnifiedSuggestion[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -82,36 +101,92 @@ export default function SkillsManager() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [fetchSkills, fetchDevicons]);
 
-    const handleSearch = (query: string) => {
+    const handleSearch = async (query: string) => {
         setCurrentSkill({ ...currentSkill, nameEn: query });
         if (query.length > 1) {
             const lower = query.toLowerCase();
-            const filtered = deviconData.filter(d => {
+
+            // 0. Preset Filter (Featured)
+            const presetMatched = PRESET_SKILLS.filter(p =>
+                p.name.toLowerCase().includes(lower)
+            ).map(p => ({
+                name: p.icon,
+                displayName: p.name,
+                source: 'preset' as const
+            }));
+
+            // 1. Local Devicon Filter
+            const deviconFiltered = deviconData.filter(d => {
                 const nameMatch = typeof d.name === 'string' && d.name.toLowerCase().includes(lower);
                 const tagMatch = Array.isArray(d.tags) && d.tags.some(t => typeof t === 'string' && t.toLowerCase().includes(lower));
                 const aliasMatch = Array.isArray(d.aliases) && d.aliases.some(a => typeof a === 'string' && a.toLowerCase().includes(lower));
-
                 return nameMatch || tagMatch || aliasMatch;
-            }).slice(0, 10); // Limit to 10 suggestions
-            setSuggestions(filtered);
+            }).map(d => ({
+                name: d.name,
+                source: 'devicon' as const,
+                versions: d.versions,
+                tags: d.tags
+            }));
+
+            // 2. Iconify Global Search
+            let iconifyResults: any[] = [];
+            try {
+                const res = await fetch(`https://api.iconify.design/search?query=${query}&limit=30`);
+                if (res.ok) {
+                    const data = await res.json();
+                    iconifyResults = (data.icons || []).map((icon: string) => ({
+                        name: icon,
+                        source: 'iconify' as const
+                    }));
+                }
+            } catch (err) {
+                console.error("Iconify search failed", err);
+            }
+
+            // Combine and prioritize high-quality sets like 'skill-icons' or 'logos'
+            const combined = [...deviconFiltered, ...iconifyResults];
+            const sorted = combined.sort((a, b) => {
+                const aName = a.name.toLowerCase();
+                const bName = b.name.toLowerCase();
+
+                // Prioritize skill-icons prefix
+                if (aName.startsWith('skill-icons:') && !bName.startsWith('skill-icons:')) return -1;
+                if (!aName.startsWith('skill-icons:') && bName.startsWith('skill-icons:')) return 1;
+
+                // Prioritize logos prefix
+                if (aName.startsWith('logos:') && !bName.startsWith('logos:')) return -1;
+                if (!aName.startsWith('logos:') && bName.startsWith('logos:')) return 1;
+
+                return 0;
+            });
+
+            setSuggestions([...presetMatched, ...sorted].slice(0, 20));
             setShowSuggestions(true);
         } else {
             setShowSuggestions(false);
         }
     };
 
-    const selectDevicon = (item: DeviconSkill) => {
-        // Construct standard URL
-        // Prefer 'original' then 'plain' then first available
-        const version = item.versions.svg.includes('original') ? 'original'
-            : item.versions.svg.includes('plain') ? 'plain'
-                : item.versions.svg[0];
+    const selectIcon = (item: UnifiedSuggestion) => {
+        let url = '';
+        let name = item.displayName || item.name;
 
-        const url = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${item.name}/${item.name}-${version}.svg`;
+        if (item.source === 'devicon' && item.versions) {
+            const version = item.versions.svg.includes('original') ? 'original'
+                : item.versions.svg.includes('plain') ? 'plain'
+                    : item.versions.svg[0];
+            url = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${item.name}/${item.name}-${version}.svg`;
+        } else {
+            // Preset or Iconify
+            // URL pattern: https://api.iconify.design/prefix/name.svg
+            const iconToUse = item.name.includes(':') ? item.name : `logos:${item.name}`;
+            const [prefix, iconName] = iconToUse.split(':');
+            url = `https://api.iconify.design/${prefix}/${iconName}.svg`;
+        }
 
         setCurrentSkill({
             ...currentSkill,
-            nameEn: item.name, // Use official name
+            nameEn: name,
             imageUrl: url
         });
         setShowSuggestions(false);
@@ -204,28 +279,44 @@ export default function SkillsManager() {
                             {/* Autocomplete Suggestions */}
                             {showSuggestions && suggestions.length > 0 && (
                                 <div className="absolute z-50 w-full mt-2 bg-gray-800 border border-white/10 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                                    {suggestions.map(s => {
-                                        // Preview URL
-                                        const v = s.versions.svg.includes('original') ? 'original' : s.versions.svg[0];
-                                        const url = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${s.name}/${s.name}-${v}.svg`;
-
-                                        return (
-                                            <button
-                                                key={s.name}
-                                                type="button"
-                                                onClick={() => selectDevicon(s)}
-                                                className="w-full text-left px-4 py-3 hover:bg-white/5 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0"
-                                            >
-                                                <img src={url} alt="" className="w-6 h-6" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                                                <div>
-                                                    <span className="font-bold text-white">{s.name}</span>
-                                                    {s.tags.length > 0 && (
-                                                        <span className="text-xs text-gray-500 ml-2">({s.tags.slice(0, 2).join(', ')})</span>
+                                    {suggestions.map((s, idx) => (
+                                        <button
+                                            key={`${s.name}-${idx}`}
+                                            type="button"
+                                            onClick={() => selectIcon(s)}
+                                            className="w-full text-left px-4 py-3 hover:bg-white/5 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0"
+                                        >
+                                            <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center p-1.5 shadow-inner">
+                                                {s.source === 'devicon' && s.versions ? (
+                                                    <img
+                                                        src={`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${s.name}/${s.name}-${s.versions.svg.includes('original') ? 'original' : s.versions.svg[0]}.svg`}
+                                                        alt=""
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={`https://api.iconify.design/${s.name.replace(':', '/')}.svg`}
+                                                        alt=""
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <span className="font-bold text-white text-sm">{s.displayName || (s.name.includes(':') ? s.name.split(':')[1] : s.name)}</span>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded leading-none ${s.source === 'preset' ? 'bg-green-500/20 text-green-400' :
+                                                            s.source === 'devicon' ? 'bg-cyan-500/20 text-cyan-400' :
+                                                                'bg-purple-500/20 text-purple-400'
+                                                        }`}>
+                                                        {s.source === 'preset' ? 'FEATURED' : s.source.toUpperCase()}
+                                                    </span>
+                                                    {s.source !== 'devicon' && s.name.includes(':') && (
+                                                        <span className="text-[9px] text-gray-500">{s.name.split(':')[0]}</span>
                                                     )}
                                                 </div>
-                                            </button>
-                                        );
-                                    })}
+                                            </div>
+                                        </button>
+                                    ))}
                                 </div>
                             )}
 

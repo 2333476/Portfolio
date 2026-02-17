@@ -9,12 +9,16 @@ const { requireAuth } = require('../middleware/auth');
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: async (req, file) => {
-        const isPdf = file.mimetype === 'application/pdf' || file.originalname.endsWith('.pdf');
+        const filename = file.originalname.toLowerCase();
+        const isPdf = file.mimetype === 'application/pdf' || filename.endsWith('.pdf');
+
+        console.log(`[Upload] Processing file: ${file.originalname}, isPdf: ${isPdf}`);
+
         return {
             folder: 'portfolio',
             resource_type: isPdf ? 'raw' : 'image',
             format: isPdf ? 'pdf' : undefined,
-            type: 'upload',
+            type: 'upload', // 'upload' means public
             access_mode: 'public'
         };
     }

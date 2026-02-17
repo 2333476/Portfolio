@@ -102,7 +102,7 @@ export default function Hero() {
                 >
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white dark:border-[#0a0a0a] bg-gray-100 dark:bg-gray-800 shadow-inner">
                         <img
-                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Isaac"
+                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Isaac&mouth=smile&hairColor=2c1b18&skinColor=ae5d29&facialHairProbability=0"
                             alt="Isaac N."
                             className="w-full h-full object-cover"
                         />

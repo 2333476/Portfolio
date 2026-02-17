@@ -66,14 +66,23 @@ class BaseService {
         });
     }
 
-    deleteFile(relativePah) {
-        const fullPath = path.join(__dirname, '../../public', relativePah);
+    deleteFile(fileUrl) {
+        if (!fileUrl) return;
+
+        // If it's a Cloudinary URL, we skip local deletion
+        if (fileUrl.includes('cloudinary.com')) {
+            console.log(`[FileService] Cloudinary file detected, skip local delete: ${fileUrl}`);
+            // In a full implementation, we would use cloudinary.uploader.destroy here
+            return;
+        }
+
+        const fullPath = path.join(__dirname, '../../public', fileUrl);
         if (fs.existsSync(fullPath)) {
             try {
                 fs.unlinkSync(fullPath);
-                console.log(`[FileService] Deleted: ${fullPath}`);
+                console.log(`[FileService] Deleted local: ${fullPath}`);
             } catch (err) {
-                console.error(`[FileService] Error deleting ${fullPath}:`, err);
+                console.error(`[FileService] Error deleting local ${fullPath}:`, err);
             }
         }
     }

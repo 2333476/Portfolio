@@ -11,7 +11,8 @@ const storage = new CloudinaryStorage({
     params: {
         folder: 'portfolio',
         allowed_formats: ['jpg', 'png', 'jpeg', 'gif', 'pdf'],
-        resource_type: 'auto'
+        resource_type: 'auto',
+        type: 'upload' // Explicitly make assets public
     }
 });
 

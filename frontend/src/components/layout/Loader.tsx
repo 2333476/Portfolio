@@ -15,14 +15,14 @@ export default function Loader() {
                         initial={{ scale: 0 }}
                         animate={{ scale: [1, 1.5, 1] }}
                         transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-                        className="w-4 h-4 rounded-full bg-green-500"
+                        className="w-4 h-4 rounded-full bg-purple-600"
                     />
                 ))}
             </div>
             <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-green-400 text-sm tracking-widest uppercase"
+                className="text-purple-400 text-sm tracking-widest uppercase"
             >
                 Initializing System...
             </motion.p>

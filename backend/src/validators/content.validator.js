@@ -6,10 +6,9 @@ const projectSchema = z.object({
     descEn: z.string().optional(),
     descFr: z.string().optional(),
     imageUrl: z.string().optional(),
-    liveUrl: z.string().optional(),
-    githubUrl: z.string().optional(),
-    techStack: z.string().optional(),
-    featured: z.boolean().optional(),
+    demoLink: z.string().optional(),
+    repoLink: z.string().optional(),
+    techStack: z.array(z.string()).optional(),
 });
 
 const experienceSchema = z.object({
@@ -26,9 +25,10 @@ const educationSchema = z.object({
     degreeEn: z.string().min(1),
     degreeFr: z.string().min(1),
     institution: z.string().min(1),
-    period: z.string().min(1),
-    descEn: z.string().optional(),
-    descFr: z.string().optional(),
+    startDate: z.string().min(1),
+    endDate: z.string().optional().nullable(),
+    descriptionEn: z.string().optional(),
+    descriptionFr: z.string().optional(),
     logoUrl: z.string().optional(),
 });
 
@@ -37,6 +37,7 @@ const skillSchema = z.object({
     nameFr: z.string().min(1),
     category: z.string().min(1),
     level: z.number().min(0).max(100),
+    imageUrl: z.string().optional(),
 });
 
 const certificationSchema = z.object({
@@ -46,13 +47,14 @@ const certificationSchema = z.object({
     date: z.string().min(1),
     imageUrl: z.string().optional(),
     logoUrl: z.string().optional(),
-    credentialUrl: z.string().optional(),
+    url: z.string().optional(),
 });
 
 const testimonialSchema = z.object({
-    name: z.string().min(1),
+    author: z.string().min(1),
     role: z.string().optional(),
-    message: z.string().min(1),
+    contentEn: z.string().min(1),
+    contentFr: z.string().min(1),
     approved: z.boolean().optional(),
 });
 
@@ -61,6 +63,7 @@ const contactMessageSchema = z.object({
     email: z.string().email(),
     subject: z.string().optional(),
     message: z.string().min(1),
+    read: z.boolean().optional(),
 });
 
 module.exports = {

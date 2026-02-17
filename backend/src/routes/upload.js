@@ -8,11 +8,15 @@ const { requireAuth } = require('../middleware/auth');
 // Configure Cloudinary Storage
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'portfolio',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'gif', 'pdf'],
-        resource_type: 'auto',
-        type: 'upload' // Explicitly make assets public
+    params: async (req, file) => {
+        const isPdf = file.mimetype === 'application/pdf' || file.originalname.endsWith('.pdf');
+        return {
+            folder: 'portfolio',
+            resource_type: isPdf ? 'raw' : 'image',
+            format: isPdf ? 'pdf' : undefined,
+            type: 'upload',
+            access_mode: 'public'
+        };
     }
 });
 

@@ -22,11 +22,18 @@ const generateResponse = async (message) => {
         // 2. Parse Resume PDF
         let resumeText = 'Resume not available.';
         if (resume && resume.fileUrl) {
-            const filePath = path.join(__dirname, '../../public', resume.fileUrl);
-            if (fs.existsSync(filePath)) {
-                const dataBuffer = fs.readFileSync(filePath);
-                const data = await pdf(dataBuffer);
-                resumeText = data.text;
+            try {
+                const response = await fetch(resume.fileUrl);
+                if (response.ok) {
+                    const arrayBuffer = await response.arrayBuffer();
+                    const dataBuffer = Buffer.from(arrayBuffer);
+                    const data = await pdf(dataBuffer);
+                    resumeText = data.text;
+                } else {
+                    console.warn(`[ChatService] Failed to fetch resume PDF: ${response.statusText}`);
+                }
+            } catch (fetchErr) {
+                console.error('[ChatService] Error fetching remote PDF:', fetchErr);
             }
         }
 

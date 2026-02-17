@@ -57,7 +57,14 @@ export default function SkillsImmersive() {
                         transition={{ ease: "linear", duration: 30, repeat: Infinity }}
                     >
                         {[...row1, ...row1, ...row1].map((skill, i) => (
-                            <div key={`${skill.id}-${i}`} className="flex-shrink-0 bg-white/5 border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3">
+                            <div key={`${skill.id}-${i}`} className="flex-shrink-0 bg-white/5 border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3 group/item">
+                                <div className="w-6 h-6 flex items-center justify-center p-0.5 bg-white/5 rounded">
+                                    {skill.imageUrl ? (
+                                        <img src={skill.imageUrl} alt="" className="w-full h-full object-contain" />
+                                    ) : (
+                                        <Icon icon={getSkillIcon(skill.nameEn)} className="w-full h-full text-green-400" />
+                                    )}
+                                </div>
                                 <span className="text-white font-medium text-lg">{isEn ? skill.nameEn : skill.nameFr}</span>
                             </div>
                         ))}

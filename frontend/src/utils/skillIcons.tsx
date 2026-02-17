@@ -51,6 +51,6 @@ const SKILL_MAP: Record<string, string> = {
 export const AVAILABLE_SKILLS = Object.keys(SKILL_MAP).sort();
 
 export const getSkillIcon = (skillName: string): string => {
-    const normalized = skillName.toLowerCase().replace(/[\s\-_.]/g, '');
+    const normalized = skillName.toLowerCase().replace(/[\s\-_. /]/g, '');
     return SKILL_MAP[normalized] || 'logos:devicon';
 };

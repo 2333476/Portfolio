@@ -13,6 +13,7 @@ interface Skill {
     nameFr: string;
     level: number;
     category: string;
+    imageUrl?: string;
 }
 
 const normalizeCategory = (skill: Skill): 'frontend' | 'backend' | 'tools' | 'other' => {
@@ -96,10 +97,18 @@ const SkillItem = ({ skill, index, containerRef, isEn }: { skill: Skill, index: 
                         className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-300"
                         style={{ background: `radial-gradient(circle, ${brandColor}, transparent 70%)` }}
                     />
-                    <Icon
-                        icon={iconName}
-                        className="w-full h-full object-contain filter drop-shadow-md relative z-30 group-hover:scale-110 transition-transform duration-300 pointer-events-none text-white"
-                    />
+                    {skill.imageUrl ? (
+                        <img
+                            src={skill.imageUrl}
+                            alt=""
+                            className="w-full h-full object-contain filter drop-shadow-md relative z-30 group-hover:scale-110 transition-transform duration-300 pointer-events-none"
+                        />
+                    ) : (
+                        <Icon
+                            icon={iconName}
+                            className="w-full h-full object-contain filter drop-shadow-md relative z-30 group-hover:scale-110 transition-transform duration-300 pointer-events-none text-white"
+                        />
+                    )}
                 </div>
                 <div
                     className="absolute -bottom-3 px-2 py-0.5 bg-gray-900 border border-white/10 rounded-full text-[10px] md:text-xs font-mono font-bold text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-40 translate-y-2 group-hover:translate-y-0"

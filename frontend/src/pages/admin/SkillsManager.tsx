@@ -32,6 +32,11 @@ const PRESET_SKILLS = [
     { name: 'Azure', icon: 'logos:microsoft-azure' },
     { name: 'Java', icon: 'logos:java' },
     { name: 'Spring', icon: 'logos:spring-icon' },
+    { name: 'PHP', icon: 'logos:php' },
+    { name: 'C#', icon: 'logos:c-sharp' },
+    { name: 'Android Studio', icon: 'logos:android-icon' },
+    { name: 'CI/CD', icon: 'logos:github-actions' },
+    { name: 'Pandas', icon: 'logos:pandas-icon' },
 ];
 
 interface UnifiedSuggestion {

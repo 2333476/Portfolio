@@ -32,6 +32,7 @@ const SKILL_MAP: Record<string, string> = {
     'firebase': 'logos:firebase',
     'git': 'logos:git-icon',
     'docker': 'logos:docker-icon',
+    'androidstudio': 'logos:android-icon',
     'aws': 'logos:aws',
     'linux': 'logos:linux-tux',
     'flutter': 'logos:flutter',
@@ -42,6 +43,8 @@ const SKILL_MAP: Record<string, string> = {
     'fastapi': 'logos:fastapi-icon',
     'flask': 'logos:flask',
     'express': 'logos:express',
+    'cicd': 'logos:github-actions',
+    'pandas': 'logos:pandas-icon',
     'oauth': 'logos:oauth',
 };
 

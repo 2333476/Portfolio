@@ -32,6 +32,8 @@ jobs:
           if npm run | grep -q 'test'; then npm test; else echo "No test script"; fi
       - name: Prisma validate
         run: npx prisma validate
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
       - name: Format check (if exists)
         run: |
           if npm run | grep -q 'format:check'; then npm run format:check; else echo "No format:check script"; fi

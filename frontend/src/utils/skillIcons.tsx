@@ -1,4 +1,4 @@
-
+/* eslint-disable react-refresh/only-export-components */
 // Map skill names to Devicon filenames
 // Format: [folder]/[filename]-[type].svg
 // Map skill names to Iconify identifiers

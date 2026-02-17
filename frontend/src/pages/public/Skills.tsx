@@ -68,7 +68,7 @@ const SkillItem = ({ skill, index, containerRef, isEn }: { skill: Skill, index: 
             whileTap={{ scale: 0.95, cursor: 'grabbing' }}
             drag
             dragConstraints={containerRef}
-            style={{ marginTop: `${visuals.marginTop}px`, '--brand-color': brandColor } as any}
+            style={{ marginTop: `${visuals.marginTop}px`, '--brand-color': brandColor } as React.CSSProperties & { [key: string]: string | number }}
             className="flex flex-col items-center justify-center relative group"
         >
             <div className="relative w-24 h-24 md:w-32 md:h-32 flex items-center justify-center">

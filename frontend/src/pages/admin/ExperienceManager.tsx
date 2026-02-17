@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Briefcase, Upload, Loader2, X } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ui/ConfirmModal';
@@ -28,11 +28,7 @@ export default function ExperienceManager() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchExperiences();
-    }, []);
-
-    const fetchExperiences = async () => {
+    const fetchExperiences = useCallback(async () => {
         try {
             const { data } = await api.get('/experiences');
             setExperiences(data);
@@ -42,7 +38,11 @@ export default function ExperienceManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
+
+    useEffect(() => {
+        fetchExperiences();
+    }, [fetchExperiences]);
 
     const confirmDelete = (id: string) => {
         setItemToDelete(id);

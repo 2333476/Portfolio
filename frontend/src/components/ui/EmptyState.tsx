@@ -1,7 +1,7 @@
-import { Plus } from 'lucide-react';
+import { type LucideIcon, Plus } from 'lucide-react';
 
 interface EmptyStateProps {
-    icon: any;
+    icon: LucideIcon;
     title: string;
     description: string;
     actionLabel: string;

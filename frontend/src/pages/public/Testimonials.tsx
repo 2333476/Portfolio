@@ -65,10 +65,11 @@ export default function Testimonials() {
                 setSubmitStatus('idle');
                 setForm({ author: '', role: '', content: '' });
             }, 2000);
-        } catch (error: any) {
-            console.error(error);
+        } catch (error) {
+            const err = error as { response?: { data?: { error?: string } } };
+            console.error(err);
             setSubmitStatus('error');
-            const errorMessage = error.response?.data?.error || 'Failed to submit testimonial.';
+            const errorMessage = err.response?.data?.error || 'Failed to submit testimonial.';
             showToast(errorMessage, 'error');
         }
     };

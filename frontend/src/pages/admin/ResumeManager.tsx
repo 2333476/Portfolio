@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Upload, Trash2, Eye, Loader2, X, Download } from 'lucide-react';
 import api from '../../services/api';
@@ -22,11 +22,7 @@ export default function ResumeManager() {
     // Confirm Modal State
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-    useEffect(() => {
-        fetchResume();
-    }, []);
-
-    const fetchResume = async () => {
+    const fetchResume = useCallback(async () => {
         try {
             const { data } = await api.get('/resumes');
             // Assuming sorting is correct now
@@ -41,7 +37,11 @@ export default function ResumeManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
+
+    useEffect(() => {
+        fetchResume();
+    }, [fetchResume]);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Award, Upload, Loader2, X } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ui/ConfirmModal';
@@ -29,11 +29,7 @@ export default function CertificationsManager() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchCerts();
-    }, []);
-
-    const fetchCerts = async () => {
+    const fetchCerts = useCallback(async () => {
         try {
             const { data } = await api.get('/certifications');
             setCerts(data);
@@ -43,7 +39,11 @@ export default function CertificationsManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
+
+    useEffect(() => {
+        fetchCerts();
+    }, [fetchCerts]);
 
     const confirmDelete = (id: string) => {
         setItemToDelete(id);

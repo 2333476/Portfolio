@@ -24,7 +24,8 @@ export default function Navbar() {
 
     // Close mobile menu on route change
     useEffect(() => {
-        setIsOpen(false);
+        const timeout = setTimeout(() => setIsOpen(false), 0);
+        return () => clearTimeout(timeout);
     }, [location]);
 
     const navLinks = [

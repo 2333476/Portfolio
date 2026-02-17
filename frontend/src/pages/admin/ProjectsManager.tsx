@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { FolderGit2, Plus, Upload, X, Loader2 } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ui/ConfirmModal';
@@ -29,11 +29,7 @@ export default function ProjectsManager() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
-
-    const fetchProjects = async () => {
+    const fetchProjects = useCallback(async () => {
         try {
             const { data } = await api.get('/projects');
             setProjects(data);
@@ -43,7 +39,11 @@ export default function ProjectsManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
+
+    useEffect(() => {
+        fetchProjects();
+    }, [fetchProjects]);
 
     const confirmDelete = (id: string) => {
         setProjectToDelete(id);

@@ -83,30 +83,8 @@ export default function SkillsImmersive() {
 
                         {/* Underwater Particles / Bubbles */}
                         <div className="absolute inset-0 pointer-events-none">
-                            {[...Array(20)].map((_, i) => (
-                                <motion.div
-                                    key={`bubble-${i}`}
-                                    className="absolute bg-white/5 rounded-full"
-                                    initial={{
-                                        x: Math.random() * window.innerWidth,
-                                        y: window.innerHeight + 100,
-                                        scale: Math.random() * 0.5 + 0.5
-                                    }}
-                                    animate={{
-                                        y: -100,
-                                        x: `calc(${Math.random() * 100}vw)`
-                                    }}
-                                    transition={{
-                                        duration: Math.random() * 10 + 10,
-                                        repeat: Infinity,
-                                        ease: "linear",
-                                        delay: Math.random() * 5
-                                    }}
-                                    style={{
-                                        width: Math.random() * 20 + 5,
-                                        height: Math.random() * 20 + 5
-                                    }}
-                                />
+                            {Array.from({ length: 20 }).map((_, i) => (
+                                <BubbleParticle key={`bubble-${i}`} />
                             ))}
                         </div>
 
@@ -123,15 +101,51 @@ export default function SkillsImmersive() {
     );
 }
 
+const BubbleParticle = () => {
+    const [config] = useState(() => ({
+        initialX: Math.random() * window.innerWidth,
+        scale: Math.random() * 0.5 + 0.5,
+        targetX: Math.random() * 100,
+        duration: Math.random() * 10 + 10,
+        delay: Math.random() * 5,
+        size: Math.random() * 20 + 5
+    }));
+
+    return (
+        <motion.div
+            className="absolute bg-white/5 rounded-full"
+            initial={{
+                x: config.initialX,
+                y: window.innerHeight + 100,
+                scale: config.scale
+            }}
+            animate={{
+                y: -100,
+                x: `calc(${config.targetX}vw)`
+            }}
+            transition={{
+                duration: config.duration,
+                repeat: Infinity,
+                ease: "linear",
+                delay: config.delay
+            }}
+            style={{
+                width: config.size,
+                height: config.size
+            }}
+        />
+    );
+};
+
 const Bubble = ({ skill, index, isEn }: { skill: Skill, index: number, isEn: boolean }) => {
     // Generate random float animation params with larger range for more organic feel
-    const randomY = Math.random() * 40 - 20;
-    const randomX = Math.random() * 40 - 20;
-    const duration = Math.random() * 3 + 4; // Slower, driftier
-
-    // Random visual offsets to break the grid
-    const marginX = Math.random() * 20 - 10;
-    const marginY = Math.random() * 20 - 10;
+    const [visuals] = useState(() => ({
+        randomY: Math.random() * 40 - 20,
+        randomX: Math.random() * 40 - 20,
+        duration: Math.random() * 3 + 4,
+        marginX: Math.random() * 20 - 10,
+        marginY: Math.random() * 20 - 10
+    }));
 
     const iconName = getSkillIcon(skill.nameEn);
     const color = '#4ade80'; // Revert to standard Green for all bubbles
@@ -145,20 +159,20 @@ const Bubble = ({ skill, index, isEn }: { skill: Skill, index: number, isEn: boo
             animate={{
                 scale: 1,
                 opacity: 1,
-                y: [0, randomY, 0],
-                x: [0, randomX, 0]
+                y: [0, visuals.randomY, 0],
+                x: [0, visuals.randomX, 0]
             }}
             transition={{
                 scale: { delay: index * 0.05, type: "spring" },
-                y: { duration: duration, repeat: Infinity, ease: "easeInOut" },
-                x: { duration: duration * 1.2, repeat: Infinity, ease: "easeInOut" }
+                y: { duration: visuals.duration, repeat: Infinity, ease: "easeInOut" },
+                x: { duration: visuals.duration * 1.2, repeat: Infinity, ease: "easeInOut" }
             }}
             className="w-20 h-20 md:w-28 md:h-28 rounded-full cursor-grab active:cursor-grabbing backdrop-blur-md bg-white/10 border border-white/20 shadow-[0_0_30px_rgba(255,255,255,0.05)] flex flex-col items-center justify-center text-center p-2 group"
             style={{
                 borderColor: `${color}40`,
                 boxShadow: `0 0 20px ${color}20`,
-                marginLeft: `${marginX}px`,
-                marginTop: `${marginY}px`,
+                marginLeft: `${visuals.marginX}px`,
+                marginTop: `${visuals.marginY}px`,
             }}
         >
             <Icon

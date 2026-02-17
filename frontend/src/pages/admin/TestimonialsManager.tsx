@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import api from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import ConfirmModal from '../../components/ui/ConfirmModal';
@@ -21,11 +21,7 @@ export default function TestimonialsManager() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [testimonialToDelete, setTestimonialToDelete] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchTestimonials();
-    }, []);
-
-    const fetchTestimonials = async () => {
+    const fetchTestimonials = useCallback(async () => {
         try {
             const { data } = await api.get('/testimonials/admin');
             setTestimonials(data);
@@ -35,7 +31,11 @@ export default function TestimonialsManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
+
+    useEffect(() => {
+        fetchTestimonials();
+    }, [fetchTestimonials]);
 
     const toggleApproval = async (t: Testimonial) => {
         try {

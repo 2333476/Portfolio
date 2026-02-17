@@ -34,8 +34,9 @@ export default function ImageUpload({ onUpload, initialImage = '', label = 'Uplo
             // or if stored in public folder
             setImage(data.url);
             onUpload(data.url);
-        } catch (err: any) {
-            console.error(err);
+        } catch (err) {
+            const error = err as Error;
+            console.error(error);
             setError('Upload failed. Try again.');
         } finally {
             setLoading(false);

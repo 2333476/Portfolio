@@ -47,9 +47,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 setStatus('idle');
                 onClose();
             }, 2000);
-        } catch (error: any) {
+        } catch (error) {
             setStatus('error');
-            const errorMessage = error.response?.data?.error || 'Failed to send message.';
+            const axiosError = error as { response?: { data?: { error?: string } } };
+            const errorMessage = axiosError.response?.data?.error || 'Failed to send message.';
             showToast(errorMessage, 'error');
         }
     };
@@ -176,8 +177,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                             name="fax"
                                             tabIndex={-1}
                                             autoComplete="off"
-                                            value={(form as any).fax || ''}
-                                            onChange={e => setForm({ ...form, fax: e.target.value } as any)}
+                                            value={(form as Record<string, string>).fax || ''}
+                                            onChange={e => setForm(prev => ({ ...prev, fax: e.target.value }))}
                                         />
                                     </div>
 

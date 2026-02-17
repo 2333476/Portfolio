@@ -27,9 +27,11 @@ const TypewriterLoop = ({ texts, speed = 100, pause = 1500 }: { texts: string[],
         }
 
         if (subIndex === 0 && reverse) {
-            setReverse(false);
-            setIndex((prev) => (prev + 1) % texts.length);
-            return;
+            const timeout = setTimeout(() => {
+                setReverse(false);
+                setIndex((prev) => (prev + 1) % texts.length);
+            }, 0);
+            return () => clearTimeout(timeout);
         }
 
         const timeout = setTimeout(() => {
@@ -41,9 +43,12 @@ const TypewriterLoop = ({ texts, speed = 100, pause = 1500 }: { texts: string[],
 
     // Reset subtitles when texts change (language switch)
     useEffect(() => {
-        setSubIndex(0);
-        setReverse(false);
-        setIndex(0);
+        const timeout = setTimeout(() => {
+            setSubIndex(0);
+            setReverse(false);
+            setIndex(0);
+        }, 0);
+        return () => clearTimeout(timeout);
     }, [texts]);
 
     // Cursor blinking

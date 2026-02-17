@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Cpu, Trash, Plus, Check, Search, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import EmptyState from '../../components/ui/EmptyState';
@@ -42,6 +42,32 @@ export default function SkillsManager() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [skillToDelete, setSkillToDelete] = useState<string | null>(null);
 
+    const fetchDevicons = useCallback(async () => {
+        try {
+            console.log("Fetching devicons from JSDelivr...");
+            const res = await fetch('https://cdn.jsdelivr.net/gh/devicons/devicon@master/devicon.json');
+            if (!res.ok) throw new Error(`Network response was not ok: ${res.status}`);
+            const data = await res.json();
+            console.log("Devicon data fetched successfully:", data.length, "items");
+            setDeviconData(data);
+        } catch (error) {
+            console.error("Failed to fetch devicons:", error);
+            showToast("Failed to load skill suggestions", "error");
+        }
+    }, [showToast]);
+
+    const fetchSkills = useCallback(async () => {
+        try {
+            const { data } = await api.get('/skills');
+            setSkills(data);
+        } catch (error) {
+            console.error('Failed to fetch skills', error);
+            showToast('Failed to fetch skills', 'error');
+        } finally {
+            setLoading(false);
+        }
+    }, [showToast]);
+
     useEffect(() => {
         fetchSkills();
         fetchDevicons();
@@ -54,33 +80,7 @@ export default function SkillsManager() {
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    const fetchDevicons = async () => {
-        try {
-            console.log("Fetching devicons from JSDelivr...");
-            const res = await fetch('https://cdn.jsdelivr.net/gh/devicons/devicon@master/devicon.json');
-            if (!res.ok) throw new Error(`Network response was not ok: ${res.status}`);
-            const data = await res.json();
-            console.log("Devicon data fetched successfully:", data.length, "items");
-            setDeviconData(data);
-        } catch (error) {
-            console.error("Failed to fetch devicons:", error);
-            showToast("Failed to load skill suggestions", "error");
-        }
-    };
-
-    const fetchSkills = async () => {
-        try {
-            const { data } = await api.get('/skills');
-            setSkills(data);
-        } catch (error) {
-            console.error('Failed to fetch skills', error);
-            showToast('Failed to fetch skills', 'error');
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [fetchSkills, fetchDevicons]);
 
     const handleSearch = (query: string) => {
         setCurrentSkill({ ...currentSkill, nameEn: query });

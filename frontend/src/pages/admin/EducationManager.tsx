@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { GraduationCap, Upload, Loader2, X, Plus } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ui/ConfirmModal';
@@ -29,24 +29,9 @@ export default function EducationManager() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchEducations();
-    }, []);
-
-    const fetchEducations = async () => {
+    const fetchEducations = useCallback(async () => {
         try {
-            const { data } = await api.get('/educations'); // Ensure endpoint matches backend 'education' or 'educations' - schema says 'Education' model, likely route is 'educations' or 'education' via Generic CRUD. Assuming 'education' to match generic route pattern usually singular or based on file. content.js uses 'education' as key if passed? No, usually generic route is /api/:model. If model is 'Education', route might be 'education'.
-            // Checking previous file content, it accessed '/educationss'. Let's stick to '/educations' if that's what generic route expects (usually lowercase model name). 
-            // Wait, previous file used '/educationss'. Let's verify backend route registration.
-            // content.js usually registers: router.use('/projects', crud('project')); router.use('/educations', crud('education'));
-            // If previous file worked with '/educationss' then maybe I should stick to it, or maybe it was wrong?
-            // Actually, in content.js (from what I recall), I saw generic crud usage.
-            // Let's assume '/educations' is correct for 'Education' model based on common patterns, but I'll double check if fails.
-            // Actually, looking at content.js previously: 
-            // router.use('/resumes', ...)
-            // It likely maps model names to routes. 
-            // Let's use '/educations' to be safe with standard naming, or check previous file again.
-            // Previous file used `/educationss`. I will check if that route exists.
+            const { data } = await api.get('/educations');
             setEducations(data);
         } catch (error) {
             console.error('Failed to fetch educations', error);
@@ -54,7 +39,11 @@ export default function EducationManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
+
+    useEffect(() => {
+        fetchEducations();
+    }, [fetchEducations]);
 
     // Correcting endpoint based on assumption or previous knowledge. 
     // If '/educationss' was used, maybe the backend route is defined as such. 

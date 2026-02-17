@@ -129,7 +129,7 @@ export default function SkillsManager() {
             }));
 
             // 2. Iconify Global Search
-            let iconifyResults: any[] = [];
+            let iconifyResults: UnifiedSuggestion[] = [];
             try {
                 const res = await fetch(`https://api.iconify.design/search?query=${query}&limit=30`);
                 if (res.ok) {
@@ -169,7 +169,7 @@ export default function SkillsManager() {
 
     const selectIcon = (item: UnifiedSuggestion) => {
         let url = '';
-        let name = item.displayName || item.name;
+        const name = item.displayName || item.name;
 
         if (item.source === 'devicon' && item.versions) {
             const version = item.versions.svg.includes('original') ? 'original'
@@ -305,8 +305,8 @@ export default function SkillsManager() {
                                                 <span className="font-bold text-white text-sm">{s.displayName || (s.name.includes(':') ? s.name.split(':')[1] : s.name)}</span>
                                                 <div className="flex items-center gap-2 mt-0.5">
                                                     <span className={`text-[9px] font-black px-1.5 py-0.5 rounded leading-none ${s.source === 'preset' ? 'bg-green-500/20 text-green-400' :
-                                                            s.source === 'devicon' ? 'bg-cyan-500/20 text-cyan-400' :
-                                                                'bg-purple-500/20 text-purple-400'
+                                                        s.source === 'devicon' ? 'bg-cyan-500/20 text-cyan-400' :
+                                                            'bg-purple-500/20 text-purple-400'
                                                         }`}>
                                                         {s.source === 'preset' ? 'FEATURED' : s.source.toUpperCase()}
                                                     </span>

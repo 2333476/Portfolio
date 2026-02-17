@@ -33,11 +33,25 @@ export default function ResumePreviewModal({ isOpen, onClose, resumeUrl }: Resum
                         onClick={(e) => e.stopPropagation()}
                         className="bg-[#1e1e1e] w-full max-w-5xl h-[85vh] rounded-xl flex flex-col shadow-2xl border border-white/10 overflow-hidden"
                     >
-                        <iframe
-                            src={`${resumeUrl}#view=FitH`}
-                            className="w-full h-full border-none bg-gray-900"
-                            title="Resume PDF"
-                        />
+                        <div className="flex-1 relative bg-gray-900">
+                            <iframe
+                                src={resumeUrl}
+                                className="w-full h-full border-none"
+                                title="Resume PDF"
+                                loading="lazy"
+                            />
+                            {/* Fallback overlay in case of blocked iframe */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 hover:opacity-100 transition-opacity bg-black/40">
+                                <a
+                                    href={resumeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="pointer-events-auto bg-purple-600 text-white px-6 py-2 rounded-lg font-bold"
+                                >
+                                    Open in New Tab if Blank
+                                </a>
+                            </div>
+                        </div>
                     </motion.div>
                 </motion.div>
             )}

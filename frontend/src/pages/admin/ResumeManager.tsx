@@ -206,10 +206,22 @@ export default function ResumeManager() {
                             {/* PDF Viewer using iframe */}
                             <div className="flex-1 bg-gray-900 relative">
                                 <iframe
-                                    src={`${resume.fileUrl}#view=FitH`}
+                                    src={resume.fileUrl}
                                     className="w-full h-full border-none"
                                     title="Resume PDF"
+                                    loading="lazy"
                                 />
+                                {/* Fallback overlay in case of blocked iframe */}
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 hover:opacity-100 transition-opacity bg-black/40">
+                                    <a
+                                        href={resume.fileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="pointer-events-auto bg-purple-600 text-white px-6 py-2 rounded-lg font-bold"
+                                    >
+                                        Open in New Tab if Blank
+                                    </a>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

@@ -46,7 +46,7 @@ export default function Certifications() {
     }));
 
     return (
-        <section className="bg-white dark:bg-gray-950 min-h-screen pt-24 pb-20 px-4 font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300 relative">
+        <section id="certifications" className="bg-white dark:bg-gray-950 min-h-screen pt-24 pb-20 px-4 font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300 relative">
             <GridBackground />
             <div className="max-w-7xl mx-auto flex flex-col items-center relative z-10">
                 {/* Header */}

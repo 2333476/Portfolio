@@ -77,7 +77,7 @@ export default function Education() {
     };
 
     return (
-        <section className="bg-white dark:bg-[#0a0a0a] min-h-screen pt-32 pb-20 px-4 md:px-8 font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300 relative">
+        <section id="education" className="bg-white dark:bg-[#0a0a0a] min-h-screen pt-20 pb-12 md:pt-32 md:pb-20 px-4 md:px-8 font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300 relative">
             <GridBackground />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -86,19 +86,19 @@ export default function Education() {
                 className="max-w-7xl mx-auto"
             >
                 {/* Header */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-10 md:mb-16">
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="inline-flex items-center justify-center p-3 rounded-full bg-purple-500/10 mb-4"
+                        className="inline-flex items-center justify-center p-2 md:p-3 rounded-full bg-purple-500/10 mb-2 md:mb-4"
                     >
                         <GraduationCap className="text-purple-600 dark:text-purple-500" size={32} />
                     </motion.div>
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-gray-900 dark:text-white">
+                    <h2 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 tracking-tight text-gray-900 dark:text-white">
                         {t('education.title')}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 text-lg max-w-xl mx-auto">
+                    <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
                         {t('education.subtitle')}
                     </p>
                 </div>

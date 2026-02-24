@@ -44,13 +44,13 @@ export default function Navbar() {
             ? 'bg-white/80 dark:bg-gray-950/80 backdrop-blur-md py-3 shadow-sm dark:shadow-none'
             : 'bg-transparent py-4'
             }`}>
-            <div className="w-full flex justify-between items-center pl-6 pr-12 md:pl-10 md:pr-55">
-                <NavLink to="/" className="text-2xl font-bold text-gray-900 dark:text-white tracking-tighter hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+            <div className="max-w-7xl mx-auto px-8 lg:px-12 flex justify-between items-center">
+                <NavLink to="/" className="text-2xl font-bold text-gray-900 dark:text-white tracking-tighter hover:text-purple-600 dark:hover:text-purple-400 transition-colors shrink-0">
                     Isaac Nachate
                 </NavLink>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+                <div className="hidden lg:flex items-center space-x-6 lg:space-x-8">
                     {navLinks.map((link) => (
                         <NavLink
                             key={link.to}
@@ -93,7 +93,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className="md:hidden flex items-center gap-4">
+                <div className="lg:hidden flex items-center gap-4">
                     <LanguageToggle />
                     <button
                         onClick={toggleTheme}
@@ -115,7 +115,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="md:hidden absolute top-full left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 shadow-xl"
+                        className="lg:hidden absolute top-full left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 shadow-xl"
                     >
                         <div className="flex flex-col p-6 space-y-4 items-center">
                             {navLinks.map((link) => (

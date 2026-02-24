@@ -3,22 +3,39 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 import ContactModal from '../components/ui/ContactModal';
 
 interface ContactModalContextType {
+    isContactModalOpen: boolean;
+    isTestimonialModalOpen: boolean;
+    isWorkModalOpen: boolean;
     openContactModal: () => void;
     closeContactModal: () => void;
+    setTestimonialModalOpen: (isOpen: boolean) => void;
+    setWorkModalOpen: (isOpen: boolean) => void;
 }
 
 const ContactModalContext = createContext<ContactModalContextType | undefined>(undefined);
 
 export function ContactModalProvider({ children }: { children: ReactNode }) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isContactOpen, setIsContactOpen] = useState(false);
+    const [isTestimonialOpen, setIsTestimonialOpen] = useState(false);
+    const [isWorkOpen, setIsWorkOpen] = useState(false);
 
-    const openContactModal = () => setIsOpen(true);
-    const closeContactModal = () => setIsOpen(false);
+    const openContactModal = () => setIsContactOpen(true);
+    const closeContactModal = () => setIsContactOpen(false);
+    const setTestimonialModalOpen = (open: boolean) => setIsTestimonialOpen(open);
+    const setWorkModalOpen = (open: boolean) => setIsWorkOpen(open);
 
     return (
-        <ContactModalContext.Provider value={{ openContactModal, closeContactModal }}>
+        <ContactModalContext.Provider value={{
+            isContactModalOpen: isContactOpen,
+            isTestimonialModalOpen: isTestimonialOpen,
+            isWorkModalOpen: isWorkOpen,
+            openContactModal,
+            closeContactModal,
+            setTestimonialModalOpen,
+            setWorkModalOpen
+        }}>
             {children}
-            <ContactModal isOpen={isOpen} onClose={closeContactModal} />
+            <ContactModal isOpen={isContactOpen} onClose={closeContactModal} />
         </ContactModalContext.Provider>
     );
 }

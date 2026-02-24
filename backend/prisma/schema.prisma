@@ -112,3 +112,4 @@ model Certification {
   logoUrl   String? // For issuer logo if distinct from certificaiton image
   createdAt DateTime @default(now())
 }
+

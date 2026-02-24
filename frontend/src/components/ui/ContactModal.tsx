@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Copy, Check, Linkedin, Github, Instagram, Send, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { X, Copy, Check, Linkedin, Github, Instagram, Send, Loader2, Zap, Bug, Heart, Sun, Moon, Star, Bell, Coffee } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
+import { getClientUUID } from '../../utils/security';
 
 interface ContactModalProps {
     isOpen: boolean;
@@ -15,9 +17,41 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     const { showToast } = useToast();
     const [copiedField, setCopiedField] = useState<string | null>(null);
 
-    // Form State
-    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', fax: '', website_url: '', company_name: '' });
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [openTime, setOpenTime] = useState(Date.now());
+    const [verificationState, setVerificationState] = useState<'idle' | 'verified' | 'error'>('idle');
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+    const [targetIcon, setTargetIcon] = useState('zap');
+    const [displayIcons, setDisplayIcons] = useState<{ id: string, icon: any }[]>([]);
+
+    const iconPool = useMemo(() => [
+        { id: 'zap', icon: Zap },
+        { id: 'bug', icon: Bug },
+        { id: 'heart', icon: Heart },
+        { id: 'sun', icon: Sun },
+        { id: 'moon', icon: Moon },
+        { id: 'star', icon: Star },
+        { id: 'bell', icon: Bell },
+        { id: 'coffee', icon: Coffee }
+    ], []);
+
+    useEffect(() => {
+        if (isOpen) {
+            setOpenTime(Date.now());
+            setVerificationState('idle');
+
+            // 1. Randomly select 3 unique icons
+            const shuffled = [...iconPool].sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, 3);
+            setDisplayIcons(selected);
+
+            // 2. Randomly select one of the 3 as target
+            const target = selected[Math.floor(Math.random() * 3)].id;
+            setTargetIcon(target);
+        }
+    }, [isOpen, iconPool]);
+    const MAX_CHARS = 500;
 
     const contactInfo = {
         email: 'isaa.nachate1725258@gmail.com',
@@ -37,11 +71,40 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (verificationState !== 'verified') {
+            setVerificationState('error');
+            showToast(t('common.security.retry'), 'error');
+            return;
+        }
+
+        if (form.message.length > MAX_CHARS) {
+            showToast(`${t('common.error')}: Message too long (${form.message.length}/${MAX_CHARS})`, 'error');
+            return;
+        }
+
         setStatus('submitting');
         try {
-            await api.post('/messages', form);
+            const submission_token = btoa(openTime.toString());
+            // Catching bots that bypass React state via direct DOM manipulation (like in the console demo)
+            const faxVal = (document.getElementById('fax') as HTMLInputElement)?.value;
+            const websiteVal = (document.getElementById('website_url') as HTMLInputElement)?.value;
+            const companyVal = (document.getElementById('company_name') as HTMLInputElement)?.value;
+
+            await api.post('/messages', {
+                ...form,
+                fax: faxVal || form.fax,
+                website_url: websiteVal || form.website_url,
+                company_name: companyVal || form.company_name,
+                submission_token,
+                turnstile_token: turnstileToken,
+                client_uuid: getClientUUID()
+            }, {
+                headers: { 'X-Client-UUID': getClientUUID() }
+            });
+
             setStatus('success');
-            setForm({ name: '', email: '', subject: '', message: '' });
+            setForm({ name: '', email: '', subject: '', message: '', fax: '', website_url: '', company_name: '' });
             showToast(t('contact_modal.success_msg'), 'success');
             setTimeout(() => {
                 setStatus('idle');
@@ -49,8 +112,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             }, 2000);
         } catch (error) {
             setStatus('error');
-            const axiosError = error as { response?: { data?: { error?: string } } };
-            const errorMessage = axiosError.response?.data?.error || 'Failed to send message.';
+            const axiosError = error as { response?: { data?: { error?: string, message?: string } } };
+            const errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || t('contact_modal.error_msg');
             showToast(errorMessage, 'error');
         }
     };
@@ -59,7 +122,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -68,16 +130,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
                     />
 
-                    {/* Modal */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none"
                     >
-                        <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 w-full max-w-4xl rounded-3xl overflow-hidden pointer-events-auto relative shadow-2xl transition-colors duration-300 flex flex-col md:flex-row max-h-[90vh]">
+                        <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 w-full max-w-4xl rounded-3xl overflow-hidden pointer-events-auto relative shadow-2xl transition-colors duration-300 flex flex-col md:flex-row max-h-[95vh] md:max-h-[90vh] overflow-y-auto md:overflow-visible">
 
-                            {/* Close Button */}
                             <button
                                 onClick={onClose}
                                 className="absolute top-4 right-4 z-10 p-2 bg-gray-100 dark:bg-black/50 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -85,10 +145,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                 <X size={20} />
                             </button>
 
-                            {/* Left Side: Contact Info */}
-                            <div className="bg-gray-50 dark:bg-[#1a1a1a] p-8 md:w-1/3 flex flex-col justify-center border-r border-gray-100 dark:border-white/5">
+                            <div className="bg-gray-50 dark:bg-[#1a1a1a] p-6 md:p-8 md:w-1/3 flex flex-col justify-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5">
                                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('contact_modal.info_title')}</h3>
-
                                 <div className="space-y-4">
                                     <div className="group bg-white dark:bg-black/20 border border-gray-200 dark:border-white/5 p-4 rounded-2xl flex items-center justify-between gap-3 transition-colors hover:border-purple-500/30">
                                         <div className="min-w-0">
@@ -100,7 +158,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                         </button>
                                     </div>
                                 </div>
-
                                 <div className="flex justify-center gap-4 mt-8">
                                     {contactInfo.socials.map((social) => (
                                         <a
@@ -117,8 +174,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                 </div>
                             </div>
 
-                            {/* Right Side: Contact Form */}
-                            <div className="p-8 md:w-2/3 flex flex-col overflow-y-auto">
+                            <div className="p-6 md:p-8 md:w-2/3 flex flex-col">
                                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('contact_modal.form_title')}</h2>
                                 <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">{t('contact_modal.form_subtitle')}</p>
 
@@ -158,18 +214,23 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                     </div>
 
                                     <div className="flex-1">
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">{t('contact_modal.message')}</label>
+                                        <div className="flex justify-between mb-1">
+                                            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">{t('contact_modal.message')}</label>
+                                            <span className={`text-[10px] ${form.message.length > MAX_CHARS ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                                                {form.message.length}/{MAX_CHARS} {t('common.chars')}
+                                            </span>
+                                        </div>
                                         <textarea
                                             required
-                                            className="w-full h-32 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-colors resize-none text-sm"
+                                            className={`w-full h-32 bg-gray-50 dark:bg-black/20 border ${form.message.length > MAX_CHARS ? 'border-red-500' : 'border-gray-200 dark:border-white/10'} rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-colors resize-none text-sm`}
                                             placeholder={t('contact_modal.placeholder_msg')}
                                             value={form.message}
                                             onChange={e => setForm({ ...form, message: e.target.value })}
                                         />
                                     </div>
 
-                                    {/* Honeypot field (hidden from humans) */}
-                                    <div className="hidden" aria-hidden="true">
+                                    {/* Honeypot fields (hidden from humans) */}
+                                    <div className="absolute opacity-0 pointer-events-none -z-50 h-0 overflow-hidden" aria-hidden="true">
                                         <label htmlFor="fax">{t('contact_modal.fax_label')}</label>
                                         <input
                                             id="fax"
@@ -177,15 +238,85 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                             name="fax"
                                             tabIndex={-1}
                                             autoComplete="off"
-                                            value={(form as Record<string, string>).fax || ''}
+                                            value={form.fax}
                                             onChange={e => setForm(prev => ({ ...prev, fax: e.target.value }))}
+                                        />
+                                        <label htmlFor="website_url">Website URL</label>
+                                        <input
+                                            id="website_url"
+                                            type="text"
+                                            name="website_url"
+                                            tabIndex={-1}
+                                            autoComplete="off"
+                                            value={form.website_url}
+                                            onChange={e => setForm(prev => ({ ...prev, website_url: e.target.value }))}
+                                        />
+                                        <label htmlFor="company_name">Company Name</label>
+                                        <input
+                                            id="company_name"
+                                            type="text"
+                                            name="company_name"
+                                            tabIndex={-1}
+                                            autoComplete="off"
+                                            value={form.company_name}
+                                            onChange={e => setForm(prev => ({ ...prev, company_name: e.target.value }))}
+                                        />
+                                    </div>
+
+                                    {/* Visual Challenge */}
+                                    <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                                    {t('common.security.title')}
+                                                </span>
+                                                {verificationState === 'verified' && (
+                                                    <span className="text-[10px] text-green-500 font-bold flex items-center gap-1">
+                                                        <Check size={12} /> {t('common.security.success')}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                                                {t('common.security.verify', { target: t(`common.security.${targetIcon}`) })}
+                                            </p>
+                                            <div className="flex justify-center gap-6 py-2">
+                                                {displayIcons.map((item) => (
+                                                    <button
+                                                        key={item.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (item.id === targetIcon) {
+                                                                setVerificationState('verified');
+                                                            } else {
+                                                                setVerificationState('error');
+                                                            }
+                                                        }}
+                                                        className={`p-3 rounded-xl transition-all ${verificationState === 'verified' && item.id === targetIcon
+                                                            ? 'bg-green-500/20 text-green-500 border-green-500'
+                                                            : verificationState === 'error' && item.id !== targetIcon
+                                                                ? 'bg-red-500/10 text-gray-400 border-transparent opacity-50 shadow-inner'
+                                                                : 'bg-white dark:bg-black/40 text-gray-400 hover:text-purple-500 border-gray-200 dark:border-white/10'
+                                                            } border border-2`}
+                                                    >
+                                                        <item.icon size={20} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Bot Protection Widget */}
+                                    <div className="absolute opacity-0 pointer-events-none">
+                                        <Turnstile
+                                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAACgndPYlhYSMThHR"}
+                                            onSuccess={(token) => setTurnstileToken(token)}
                                         />
                                     </div>
 
                                     <button
                                         type="submit"
-                                        disabled={status === 'submitting'}
-                                        className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        disabled={status === 'submitting' || verificationState !== 'verified'}
+                                        className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                     >
                                         {status === 'submitting' ? <Loader2 className="animate-spin" /> : <Send size={18} />}
                                         {t('contact_modal.send_btn')}

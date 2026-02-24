@@ -89,7 +89,7 @@ export default function Hero() {
     const roles = t('hero.roles', { returnObjects: true }) as string[];
 
     return (
-        <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-[#0a0a0a] text-center px-6 transition-colors duration-300">
+        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-[#0a0a0a] text-center px-6 py-20 md:py-0 transition-colors duration-300">
             <GridBackground />
 
             <div className="relative z-10 flex flex-col items-center max-w-4xl mx-auto">
@@ -98,9 +98,9 @@ export default function Hero() {
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5 }}
-                    className="mb-6 p-1 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 shadow-xl"
+                    className="mb-4 sm:mb-6 p-1 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 shadow-xl"
                 >
-                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white dark:border-[#0a0a0a] bg-gray-100 dark:bg-gray-800 shadow-inner">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-white dark:border-[#0a0a0a] bg-gray-100 dark:bg-gray-800 shadow-inner">
                         <img
                             src="https://api.dicebear.com/7.x/avataaars/svg?seed=Isaac&mouth=smile&hairColor=2c1b18&skinColor=ae5d29&facialHairProbability=0"
                             alt="Isaac N."
@@ -115,7 +115,7 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                    <h2 className="text-lg md:text-xl font-medium text-gray-900 dark:text-gray-300 mb-3">
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-900 dark:text-gray-300 mb-2 sm:mb-3">
                         {t('hero.greeting')} <span className="text-purple-600 dark:text-pink-500 font-bold">
                             <TypewriterLoop
                                 texts={roles}
@@ -123,16 +123,16 @@ export default function Hero() {
                         </span>
                     </h2>
 
-                    <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight drop-shadow-sm dark:drop-shadow-none">
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-4 tracking-tight drop-shadow-sm dark:drop-shadow-none">
                         Isaac Nachate
                     </h1>
 
-                    <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed font-medium dark:font-normal">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base md:text-lg max-w-sm md:max-w-xl mx-auto mb-6 sm:mb-8 leading-relaxed font-medium dark:font-normal">
                         {t('hero.tagline')}
                     </p>
 
                     {/* Buttons */}
-                    <div className="flex flex-wrap justify-center gap-4 mb-8">
+                    <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 px-2">
                         <button
                             onClick={() => {
                                 if (resumeUrl) {
@@ -156,13 +156,13 @@ export default function Hero() {
                                     showToast(t('hero.resume_not_found'), 'info');
                                 }
                             }}
-                            className={`px-6 py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-black font-bold hover:bg-gray-800 dark:hover:bg-gray-200 transition-all flex items-center gap-2 text-sm md:text-base cursor-pointer shadow-lg hover:shadow-xl ${!resumeUrl ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                            className={`px-5 sm:px-6 py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-black font-bold hover:bg-gray-800 dark:hover:bg-gray-200 transition-all flex items-center gap-2 text-xs sm:text-sm md:text-base cursor-pointer shadow-lg hover:shadow-xl ${!resumeUrl ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                         >
-                            <FaFileDownload /> {t('hero.download_cv')}
+                            <FaFileDownload size={16} /> <span className="whitespace-nowrap">{t('hero.download_cv')}</span>
                         </a>
                         <button
                             onClick={openContactModal}
-                            className="px-6 py-2.5 rounded-lg border border-gray-300 dark:border-white/20 text-gray-700 dark:text-white font-medium hover:bg-gray-100 dark:hover:bg-white/10 transition-all text-sm md:text-base"
+                            className="px-5 sm:px-6 py-2.5 rounded-lg border border-gray-300 dark:border-white/20 text-gray-700 dark:text-white font-medium hover:bg-gray-100 dark:hover:bg-white/10 transition-all text-xs sm:text-sm md:text-base whitespace-nowrap"
                         >
                             {t('nav.contact')}
                         </button>

@@ -1,32 +1,73 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Star, Send, Loader2, Quote } from 'lucide-react';
+import { MessageSquare, Star, Send, Loader2, Quote, Check, Zap, Bug, Heart, Sun, Moon, Star as StarIcon, Bell, Coffee } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import GridBackground from '../../components/layout/GridBackground';
 import { useToast } from '../../context/ToastContext';
+import { useContactModal } from '../../context/ContactModalContext';
+import { getClientUUID } from '../../utils/security';
 
 interface Testimonial {
     id: string;
     author: string;
     role?: string;
     contentEn: string;
-    contentFr: string; // fallback or same
+    contentFr: string;
     createdAt: string;
 }
 
 export default function Testimonials() {
     const { t, i18n } = useTranslation();
     const { showToast } = useToast();
+    const { setTestimonialModalOpen } = useContactModal();
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
     const [loading, setLoading] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
 
+    // Sync with global modal state for FloatingControls to hide
+    useEffect(() => {
+        setTestimonialModalOpen(isModalOpen || !!selectedTestimonial);
+    }, [isModalOpen, selectedTestimonial, setTestimonialModalOpen]);
+
     // Form State
-    const [form, setForm] = useState({ author: '', role: '', content: '' });
+    const [form, setForm] = useState({ author: '', role: '', content: '', fax: '', website_url: '', company_name: '' });
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [openTime, setOpenTime] = useState(Date.now());
+    const [verificationState, setVerificationState] = useState<'idle' | 'verified' | 'error'>('idle');
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+    const [targetIcon, setTargetIcon] = useState('zap');
+    const [displayIcons, setDisplayIcons] = useState<{ id: string, icon: any }[]>([]);
+
+    const iconPool = useMemo(() => [
+        { id: 'zap', icon: Zap },
+        { id: 'bug', icon: Bug },
+        { id: 'heart', icon: Heart },
+        { id: 'sun', icon: Sun },
+        { id: 'moon', icon: Moon },
+        { id: 'star', icon: StarIcon },
+        { id: 'bell', icon: Bell },
+        { id: 'coffee', icon: Coffee }
+    ], []);
+
+    useEffect(() => {
+        if (isModalOpen) {
+            setOpenTime(Date.now());
+            setVerificationState('idle');
+
+            // 1. Randomly select 3 unique icons
+            const shuffled = [...iconPool].sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, 3);
+            setDisplayIcons(selected);
+
+            // 2. Randomly select one of the 3 as target
+            const target = selected[Math.floor(Math.random() * 3)].id;
+            setTargetIcon(target);
+        }
+    }, [isModalOpen, iconPool]);
     const MAX_CHARS = 300;
 
     const currentIsEn = i18n.language === 'en';
@@ -46,64 +87,85 @@ export default function Testimonials() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (verificationState !== 'verified') {
+            setVerificationState('error');
+            showToast(t('common.security.retry'), 'error');
+            return;
+        }
+
         if (form.content.length > MAX_CHARS) {
-            alert(`Please keep your testimonial under ${MAX_CHARS} characters. You have ${form.content.length}.`);
+            showToast(`${t('common.error')}: Testimonial too long (${form.content.length}/${MAX_CHARS})`, 'error');
             return;
         }
 
         setSubmitStatus('submitting');
         try {
-            await api.post('/testimonials', {
-                author: form.author,
-                role: form.role,
+            const submission_token = btoa(openTime.toString());
+            // Catching bots that bypass React state via direct DOM manipulation
+            const faxVal = (document.getElementById('fax') as HTMLInputElement)?.value;
+            const websiteVal = (document.getElementById('website_url') as HTMLInputElement)?.value;
+            const companyVal = (document.getElementById('company_name') as HTMLInputElement)?.value;
+
+            const payload = {
+                ...form,
+                fax: faxVal || form.fax,
+                website_url: websiteVal || form.website_url,
+                company_name: companyVal || form.company_name,
                 contentEn: form.content,
-                contentFr: form.content
+                contentFr: form.content,
+                submission_token,
+                turnstile_token: turnstileToken,
+                client_uuid: getClientUUID()
+            };
+            await api.post('/testimonials', payload, {
+                headers: { 'X-Client-UUID': getClientUUID() }
             });
             setSubmitStatus('success');
             setTimeout(() => {
                 setIsModalOpen(false);
                 setSubmitStatus('idle');
-                setForm({ author: '', role: '', content: '' });
+                setForm({ author: '', role: '', content: '', fax: '', website_url: '', company_name: '' });
+                setVerificationState('idle');
             }, 2000);
         } catch (error) {
-            const err = error as { response?: { data?: { error?: string } } };
-            console.error(err);
-            setSubmitStatus('error');
-            const errorMessage = err.response?.data?.error || 'Failed to submit testimonial.';
+            const axiosError = error as { response?: { data?: { error?: string, message?: string } } };
+            const errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || 'Failed to submit testimonial.';
             showToast(errorMessage, 'error');
         }
     };
 
     return (
-        <section className="bg-white dark:bg-gray-950 min-h-screen pt-28 pb-20 px-4 font-sans text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300">
+        <section id="testimonials" className="bg-white dark:bg-gray-950 min-h-screen pt-20 pb-12 md:pt-28 md:pb-20 px-4 font-sans text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300">
             <GridBackground />
 
             <div className="max-w-7xl mx-auto relative z-10">
-                {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
+                    className="text-center mb-10 md:mb-16"
                 >
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center p-3 rounded-full bg-purple-500/10 mb-4"
+                        className="inline-flex items-center justify-center p-2 md:p-3 rounded-full bg-purple-500/10 mb-2 md:mb-4"
                     >
-                        <MessageSquare className="text-purple-600 dark:text-purple-500" size={32} />
+                        <MessageSquare className="text-purple-600 dark:text-purple-500" size={24} />
                     </motion.div>
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+                    <h2 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 tracking-tight">
                         {t('testimonials.title')}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 text-lg max-w-xl mx-auto mb-8">
+                    <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-6 md:mb-8">
                         {t('testimonials.subtitle')}
                     </p>
                     <motion.button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => {
+                            setOpenTime(Date.now());
+                            setIsModalOpen(true);
+                        }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         animate={{
-                            scale: [1, 1.05, 1], // Beating effect
+                            scale: [1, 1.05, 1],
                             boxShadow: [
                                 "0px 0px 0px rgba(168, 85, 247, 0)",
                                 "0px 0px 20px rgba(168, 85, 247, 0.5)",
@@ -122,7 +184,6 @@ export default function Testimonials() {
                     </motion.button>
                 </motion.div>
 
-                {/* Grid */}
                 {loading ? (
                     <div className="flex justify-center py-20">
                         <Loader2 className="animate-spin text-purple-600" size={48} />
@@ -167,7 +228,6 @@ export default function Testimonials() {
                 )}
             </div>
 
-            {/* Write Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
@@ -182,7 +242,7 @@ export default function Testimonials() {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            className="bg-white dark:bg-[#1a1a1a] p-8 rounded-3xl shadow-2xl w-full max-w-lg relative z-10"
+                            className="bg-white dark:bg-[#1a1a1a] p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-lg relative z-10 max-h-[90vh] overflow-y-auto"
                         >
                             {submitStatus === 'success' ? (
                                 <div className="text-center py-10">
@@ -255,9 +315,90 @@ export default function Testimonials() {
                                                 className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 focus:border-purple-500 focus:outline-none transition-colors text-gray-900 dark:text-white resize-none"
                                                 placeholder="..."
                                             />
+                                            <div className="absolute opacity-0 pointer-events-none -z-50 h-0 overflow-hidden" aria-hidden="true">
+                                                <label htmlFor="fax">Fax</label>
+                                                <input
+                                                    id="fax"
+                                                    type="text"
+                                                    name="fax"
+                                                    tabIndex={-1}
+                                                    autoComplete="off"
+                                                    value={form.fax}
+                                                    onChange={e => setForm(prev => ({ ...prev, fax: e.target.value }))}
+                                                />
+                                                <label htmlFor="website_url">Website URL</label>
+                                                <input
+                                                    id="website_url"
+                                                    type="text"
+                                                    name="website_url"
+                                                    tabIndex={-1}
+                                                    autoComplete="off"
+                                                    value={form.website_url}
+                                                    onChange={e => setForm(prev => ({ ...prev, website_url: e.target.value }))}
+                                                />
+                                                <label htmlFor="company_name">Company Name</label>
+                                                <input
+                                                    id="company_name"
+                                                    type="text"
+                                                    name="company_name"
+                                                    tabIndex={-1}
+                                                    autoComplete="off"
+                                                    value={form.company_name}
+                                                    onChange={e => setForm(prev => ({ ...prev, company_name: e.target.value }))}
+                                                />
+                                            </div>
                                         </div>
 
-                                        <div className="flex gap-3 pt-4">
+                                        <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10 mt-4">
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                                        {t('common.security.title')}
+                                                    </span>
+                                                    {verificationState === 'verified' && (
+                                                        <span className="text-[10px] text-green-500 font-bold flex items-center gap-1">
+                                                            <Check size={12} /> {t('common.security.success')}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                                                    {t('common.security.verify', { target: t(`common.security.${targetIcon}`) })}
+                                                </p>
+                                                <div className="flex justify-center gap-6 py-2">
+                                                    {displayIcons.map((item) => (
+                                                        <button
+                                                            key={item.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (item.id === targetIcon) {
+                                                                    setVerificationState('verified');
+                                                                } else {
+                                                                    setVerificationState('error');
+                                                                }
+                                                            }}
+                                                            className={`p-3 rounded-xl transition-all ${verificationState === 'verified' && item.id === targetIcon
+                                                                ? 'bg-green-500/20 text-green-500 border-green-500'
+                                                                : verificationState === 'error' && item.id !== targetIcon
+                                                                    ? 'bg-red-500/10 text-gray-400 border-transparent opacity-50 shadow-inner'
+                                                                    : 'bg-white dark:bg-black/40 text-gray-400 hover:text-purple-500 border-gray-200 dark:border-white/10'
+                                                                } border border-2`}
+                                                        >
+                                                            <item.icon size={20} />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Bot Protection Widget */}
+                                        <div className="absolute opacity-0 pointer-events-none">
+                                            <Turnstile
+                                                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAACgndPYlhYSMThHR"}
+                                                onSuccess={(token) => setTurnstileToken(token)}
+                                            />
+                                        </div>
+
+                                        <div className="flex gap-3 pt-6">
                                             <button
                                                 type="button"
                                                 onClick={() => setIsModalOpen(false)}
@@ -267,8 +408,8 @@ export default function Testimonials() {
                                             </button>
                                             <button
                                                 type="submit"
-                                                disabled={submitStatus === 'submitting'}
-                                                className="flex-1 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold transition-colors flex items-center justify-center gap-2"
+                                                disabled={submitStatus === 'submitting' || verificationState !== 'verified'}
+                                                className="flex-1 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold transition-all shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                             >
                                                 {submitStatus === 'submitting' ? <Loader2 className="animate-spin" /> : <Send size={18} />}
                                                 {t('testimonials.form_submit')}
@@ -282,7 +423,6 @@ export default function Testimonials() {
                 )}
             </AnimatePresence>
 
-            {/* Detail Modal */}
             <AnimatePresence>
                 {selectedTestimonial && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
@@ -295,7 +435,7 @@ export default function Testimonials() {
                         />
                         <motion.div
                             layoutId={selectedTestimonial.id}
-                            className="bg-white dark:bg-[#1a1a1a] p-8 rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 max-h-[80vh] overflow-y-auto"
+                            className="bg-white dark:bg-[#1a1a1a] p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 max-h-[90vh] md:max-h-[80vh] overflow-y-auto"
                         >
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">

@@ -19,3 +19,10 @@ body {
 .glass-panel {
   @apply bg-white/5 backdrop-blur-lg border border-white/10;
 }
+
+/* Hide text on short screens to prevent UI collision */
+@media (max-height: 650px) {
+  .hide-on-short {
+    display: none;
+  }
+}

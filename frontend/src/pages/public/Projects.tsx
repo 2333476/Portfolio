@@ -37,14 +37,14 @@ export default function Projects() {
     }, []);
 
     return (
-        <section className="bg-white dark:bg-gray-950 min-h-screen pt-28 pb-20 px-4 font-sans text-gray-900 dark:text-white transition-colors duration-300 relative overflow-hidden">
+        <section id="projects" className="relative min-h-screen pt-20 pb-12 md:pt-24 md:pb-16 overflow-hidden bg-white dark:bg-gray-950 transition-colors duration-300">
             <GridBackground />
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-10"
+                    className="text-center mb-10 md:mb-16"
                 >
                     <h2 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
                         <Code2 className="text-purple-600 dark:text-purple-500" size={40} />

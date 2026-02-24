@@ -4,6 +4,7 @@ import { Plus, X, Briefcase, Globe, Loader2, Cpu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import GridBackground from '../../components/layout/GridBackground';
+import { useContactModal } from '../../context/ContactModalContext';
 
 interface Experience {
     id: string;
@@ -19,9 +20,15 @@ interface Experience {
 
 export default function Work() {
     const { t, i18n } = useTranslation();
+    const { setWorkModalOpen } = useContactModal();
     const [experiences, setExperiences] = useState<Experience[]>([]);
     const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Sync with global modal state for FloatingControls to hide
+    useEffect(() => {
+        setWorkModalOpen(!!selectedExp);
+    }, [selectedExp, setWorkModalOpen]);
 
     const isEn = i18n.language === 'en';
 
@@ -39,15 +46,15 @@ export default function Work() {
     }, []);
 
     return (
-        <section className="bg-white dark:bg-gray-950 min-h-screen pt-28 pb-20 px-4 relative overflow-x-hidden font-sans transition-colors duration-300">
+        <section id="work" className="bg-white dark:bg-gray-950 min-h-screen pt-20 pb-12 md:pt-28 md:pb-20 px-4 relative overflow-x-hidden font-sans transition-colors duration-300">
             <GridBackground />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center mb-20"
+                className="text-center mb-10 md:mb-20"
             >
-                <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-3xl md:text-6xl font-bold text-gray-900 dark:text-white mb-2 md:mb-4">
                     {t('work.title')}
                 </h2>
             </motion.div>

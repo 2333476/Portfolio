@@ -166,6 +166,21 @@
         "loading": "Chargement...",
         "error": "Une erreur est survenue",
         "submit": "Envoyer",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "security": {
+            "title": "Vérification de Sécurité",
+            "success": "Vérifié",
+            "verify": "Cliquez sur l'icône {{target}} pour vérifier.",
+            "zap": "Éclair",
+            "bug": "Insecte",
+            "heart": "Cœur",
+            "sun": "Soleil",
+            "moon": "Lune",
+            "star": "Étoile",
+            "bell": "Cloche",
+            "coffee": "Café",
+            "retry": "Veuillez compléter la vérification de sécurité."
+        },
+        "chars": "caractères"
     }
 }

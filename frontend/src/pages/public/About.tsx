@@ -66,14 +66,16 @@ export default function About() {
     }, [step]);
 
     return (
-        <section className="h-screen w-full bg-white dark:bg-gray-950 flex items-center justify-center relative overflow-hidden pt-20 px-4 transition-colors duration-300">
+        <section id="about" className="relative min-h-screen pt-20 pb-16 md:pt-24 overflow-hidden dark:bg-gray-950 flex items-center justify-center px-4 transition-colors duration-300">
             <GridBackground />
             {/* Terminal Window */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-[850px] bg-[#1a1b26] rounded-xl shadow-2xl shadow-purple-900/10 border border-gray-800/50 font-mono text-[13px] md:text-[14px] leading-normal relative z-10 flex flex-col"
+                drag
+                dragConstraints={{ left: -100, right: 100, top: -50, bottom: 50 }}
+                className="w-full max-w-lg sm:max-w-2xl lg:max-w-4xl bg-[#1e1e1e] rounded-xl shadow-2xl border border-white/10 overflow-hidden relative z-10 scale-[0.85] sm:scale-100 font-mono text-[13px] md:text-[14px] leading-normal flex flex-col"
                 style={{ height: 'min(580px, 70vh)' }}
             >
                 {/* Header */}
@@ -87,7 +89,7 @@ export default function About() {
                 </div>
 
                 {/* Content */}
-                <div className="p-8 space-y-5 text-gray-300 overflow-hidden flex-1 flex flex-col pt-4">
+                <div className="p-8 space-y-5 text-gray-300 overflow-y-auto flex-1 flex flex-col pt-4 scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent">
 
                     {/* Welcome Message */}
                     {step >= 1 && (
@@ -223,6 +225,9 @@ export default function About() {
                                 <span className="text-purple-400 font-bold">isaac@portfolio:~$</span>
                                 <span className="w-2.5 h-5 bg-gray-400 block"></span>
                             </div>
+
+                            {/* Guard spacer for floating buttons on short screens */}
+                            <div className="h-20 shrink-0" />
                         </div>
                     )}
                 </div>

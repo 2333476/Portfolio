@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, MessageCircle, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { getClientUUID } from '../utils/security';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -45,6 +47,7 @@ export default function ChatWidget() {
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -65,7 +68,13 @@ export default function ChatWidget() {
         setLoading(true);
 
         try {
-            const { data } = await api.post('/chat', { message: userMsg });
+            const { data } = await api.post('/chat', {
+                message: userMsg,
+                turnstile_token: turnstileToken,
+                client_uuid: getClientUUID()
+            }, {
+                headers: { 'X-Client-UUID': getClientUUID() }
+            });
             setMessages(prev => [...prev, { role: 'assistant', text: data.reply }]);
         } catch (error) {
             console.error(error);
@@ -145,6 +154,14 @@ export default function ChatWidget() {
                                         placeholder={t('chat.input_placeholder')}
                                         className="w-full bg-[#0f0f1a] border border-white/10 rounded-xl pl-4 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors text-sm"
                                     />
+                                    {/* Bot Protection Triggered on Open or Message */}
+                                    <div className="absolute opacity-0 pointer-events-none">
+                                        <Turnstile
+                                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAACgndPYlhYSMThHR"}
+                                            onSuccess={(token) => setTurnstileToken(token)}
+                                        />
+                                    </div>
+
                                     <button
                                         type="submit"
                                         disabled={loading || !input.trim()}

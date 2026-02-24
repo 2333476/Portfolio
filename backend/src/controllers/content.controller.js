@@ -1,3 +1,4 @@
+const prisma = require('../lib/prisma');
 const BaseService = require('../services/base.service');
 const { BadRequestError } = require('../utils/errors/ApiError');
 const validators = require('../validators/content.validator');
@@ -31,10 +32,72 @@ class ContentController {
         try {
             let data = req.body;
 
-            // Honeypot check for messages/testimonials
-            if (data.fax || data.website_url) {
-                console.warn('[ContentController] Spam detected via honeypot');
-                throw new BadRequestError('Spam detected');
+            // Honeypot and Advanced Security check for messages/testimonials
+            const publicModels = ['contactMessage', 'testimonial'];
+            if (publicModels.includes(this.service.modelName)) {
+
+                // 1. Classic Honeypot
+                if (data.fax || data.website_url || data.company_name) {
+                    console.warn(`[ContentController] Spam detected via honeypot for model: ${this.service.modelName}`);
+                    throw new BadRequestError('Spam submission blocked.');
+                }
+
+                // 2. Disposable Email Check (Simplified Spam Protection)
+                if (data.email) {
+                    const disposableDomains = ['yopmail.com', 'temp-mail.org', 'guerrillamail.com', 'mailinator.com', '10minutemail.com'];
+                    const domain = data.email.split('@')[1]?.toLowerCase();
+                    if (disposableDomains.includes(domain)) {
+                        throw new BadRequestError('Temporary email addresses are not allowed. Please use a permanent email.');
+                    }
+                }
+
+                // 3. Cloudflare Turnstile Verification
+                if (!data.turnstile_token && process.env.NODE_ENV === 'production') {
+                    throw new BadRequestError('Security verification failed (missing bot protection token)');
+                }
+
+                if (data.turnstile_token) {
+                    try {
+                        const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                secret: process.env.TURNSTILE_SECRET_KEY,
+                                response: data.turnstile_token
+                            })
+                        });
+
+                        const turnstileData = await turnstileResponse.json();
+                        if (!turnstileData.success) {
+                            console.warn(`[ContentController] Turnstile verification failed:`, turnstileData['error-codes']);
+                            throw new BadRequestError('Security verification failed. Please refresh the page and try again.');
+                        }
+                    } catch (err) {
+                        console.error('[ContentController] Turnstile API error:', err);
+                        // Open only in non-prod
+                        if (process.env.NODE_ENV === 'production') throw new BadRequestError('Security service unavailable.');
+                    }
+                }
+
+                // 4. Time-Check (Bot Detection via Speed)
+                const MIN_SUBMISSION_TIME_MS = 3000;
+                if (data.submission_token) {
+                    try {
+                        const decodedTime = parseInt(Buffer.from(data.submission_token, 'base64').toString());
+                        const duration = Date.now() - decodedTime;
+
+                        if (isNaN(decodedTime) || duration < MIN_SUBMISSION_TIME_MS) {
+                            console.warn(`[ContentController] Rapid submission detected (${duration}ms)`);
+                            throw new BadRequestError('Form submitted too quickly. Please take your time.');
+                        }
+                    } catch (e) {
+                        // Ignore invalid tokens silently or log
+                    }
+                }
+
+                // Clean up security fields
+                const fieldsToDelete = ['submission_token', 'turnstile_token', 'website_url', 'company_name', 'fax', 'client_uuid'];
+                fieldsToDelete.forEach(f => delete data[f]);
             }
 
             if (this.validator) {

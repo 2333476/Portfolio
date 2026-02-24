@@ -160,7 +160,7 @@ export default function Skills() {
     const filteredSkills = selectedCategory ? skills.filter(s => normalizeCategory(s) === selectedCategory) : [];
 
     return (
-        <section className="bg-white dark:bg-gray-950 min-h-screen pt-28 pb-20 px-4 font-sans text-gray-900 dark:text-white overflow-hidden relative transition-colors duration-300">
+        <section id="skills" className="bg-white dark:bg-gray-950 min-h-screen pt-20 pb-12 md:pt-28 md:pb-20 px-4 font-sans text-gray-900 dark:text-white overflow-hidden relative transition-colors duration-300">
             <GridBackground />
             <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
@@ -169,13 +169,13 @@ export default function Skills() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-10 z-10"
+                    className="text-center mb-6 md:mb-10 z-10"
                 >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
-                        <Cpu className="text-purple-600 dark:text-purple-500" size={40} />
+                    <h2 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 flex items-center justify-center gap-3">
+                        <Cpu className="text-purple-600 dark:text-purple-500" size={32} />
                         <span>{t('skills_page.title')}</span>
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400">{t('skills_page.subtitle')}</p>
+                    <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">{t('skills_page.subtitle')}</p>
                 </motion.div>
 
                 {loading ? (

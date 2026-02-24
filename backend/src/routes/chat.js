@@ -7,7 +7,8 @@ const prisma = require('../lib/prisma');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const chatController = require('../controllers/chat.controller');
+const { chatLimiter } = require('../middleware/rateLimit');
 
-router.post('/', chatController.handleChat);
+router.post('/', chatLimiter, chatController.handleChat);
 
 module.exports = router;

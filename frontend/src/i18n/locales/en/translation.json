@@ -166,6 +166,21 @@
         "loading": "Loading...",
         "error": "An error occurred",
         "submit": "Submit",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "security": {
+            "title": "Security Check",
+            "success": "Verified",
+            "verify": "Click the {{target}} to verify.",
+            "zap": "Lightning Bolt",
+            "bug": "Bug",
+            "heart": "Heart",
+            "sun": "Sun",
+            "moon": "Moon",
+            "star": "Star",
+            "bell": "Bell",
+            "coffee": "Coffee",
+            "retry": "Please complete the security check."
+        },
+        "chars": "chars"
     }
 }

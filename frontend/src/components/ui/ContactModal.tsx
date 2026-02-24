@@ -309,9 +309,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                                     </div>
 
                                     {/* Bot Protection Widget */}
-                                    <div className="absolute opacity-0 pointer-events-none">
+                                    <div className="flex justify-center py-2">
                                         <Turnstile
-                                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAACgndPYlhYSMThHR"}
+                                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
                                             onSuccess={(token) => setTurnstileToken(token)}
                                         />
                                     </div>

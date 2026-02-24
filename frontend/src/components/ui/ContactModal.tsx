@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Check, Linkedin, Github, Instagram, Send, Loader2, Zap, Bug, Heart, Sun, Moon, Star, Bell, Coffee } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../context/ToastContext';
@@ -19,11 +19,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', fax: '', website_url: '', company_name: '' });
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-    const [openTime, setOpenTime] = useState(Date.now());
+    const openTimeRef = useRef(0);
     const [verificationState, setVerificationState] = useState<'idle' | 'verified' | 'error'>('idle');
     const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
     const [targetIcon, setTargetIcon] = useState('zap');
-    const [displayIcons, setDisplayIcons] = useState<{ id: string, icon: any }[]>([]);
+    const [displayIcons, setDisplayIcons] = useState<{ id: string, icon: React.ElementType }[]>([]);
 
     const iconPool = useMemo(() => [
         { id: 'zap', icon: Zap },
@@ -38,17 +38,20 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
     useEffect(() => {
         if (isOpen) {
-            setOpenTime(Date.now());
-            setVerificationState('idle');
+            // 🛡️ Impure updates (Math.random, Date.now) and setState must be deferred 
+            // to satisfy strict purity and avoid cascading render warnings.
+            const timer = setTimeout(() => {
+                openTimeRef.current = Date.now();
+                setVerificationState('idle');
 
-            // 1. Randomly select 3 unique icons
-            const shuffled = [...iconPool].sort(() => Math.random() - 0.5);
-            const selected = shuffled.slice(0, 3);
-            setDisplayIcons(selected);
+                const shuffled = [...iconPool].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, 3);
+                const target = selected[Math.floor(Math.random() * 3)].id;
 
-            // 2. Randomly select one of the 3 as target
-            const target = selected[Math.floor(Math.random() * 3)].id;
-            setTargetIcon(target);
+                setDisplayIcons(selected);
+                setTargetIcon(target);
+            }, 0);
+            return () => clearTimeout(timer);
         }
     }, [isOpen, iconPool]);
     const MAX_CHARS = 500;
@@ -85,7 +88,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
         setStatus('submitting');
         try {
-            const submission_token = btoa(openTime.toString());
+            const submission_token = btoa(openTimeRef.current.toString());
             // Catching bots that bypass React state via direct DOM manipulation (like in the console demo)
             const faxVal = (document.getElementById('fax') as HTMLInputElement)?.value;
             const websiteVal = (document.getElementById('website_url') as HTMLInputElement)?.value;

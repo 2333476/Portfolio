@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Star, Send, Loader2, Quote, Check, Zap, Bug, Heart, Sun, Moon, Star as StarIcon, Bell, Coffee } from 'lucide-react';
@@ -36,11 +36,11 @@ export default function Testimonials() {
     // Form State
     const [form, setForm] = useState({ author: '', role: '', content: '', fax: '', website_url: '', company_name: '' });
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-    const [openTime, setOpenTime] = useState(Date.now());
+    const openTimeRef = useRef(0);
     const [verificationState, setVerificationState] = useState<'idle' | 'verified' | 'error'>('idle');
     const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
     const [targetIcon, setTargetIcon] = useState('zap');
-    const [displayIcons, setDisplayIcons] = useState<{ id: string, icon: any }[]>([]);
+    const [displayIcons, setDisplayIcons] = useState<{ id: string, icon: React.ElementType }[]>([]);
 
     const iconPool = useMemo(() => [
         { id: 'zap', icon: Zap },
@@ -55,17 +55,18 @@ export default function Testimonials() {
 
     useEffect(() => {
         if (isModalOpen) {
-            setOpenTime(Date.now());
-            setVerificationState('idle');
+            const timer = setTimeout(() => {
+                openTimeRef.current = Date.now();
+                setVerificationState('idle');
 
-            // 1. Randomly select 3 unique icons
-            const shuffled = [...iconPool].sort(() => Math.random() - 0.5);
-            const selected = shuffled.slice(0, 3);
-            setDisplayIcons(selected);
+                const shuffled = [...iconPool].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, 3);
+                const target = selected[Math.floor(Math.random() * 3)].id;
 
-            // 2. Randomly select one of the 3 as target
-            const target = selected[Math.floor(Math.random() * 3)].id;
-            setTargetIcon(target);
+                setDisplayIcons(selected);
+                setTargetIcon(target);
+            }, 0);
+            return () => clearTimeout(timer);
         }
     }, [isModalOpen, iconPool]);
     const MAX_CHARS = 300;
@@ -100,7 +101,7 @@ export default function Testimonials() {
 
         setSubmitStatus('submitting');
         try {
-            const submission_token = btoa(openTime.toString());
+            const submission_token = btoa(openTimeRef.current.toString());
             // Catching bots that bypass React state via direct DOM manipulation
             const faxVal = (document.getElementById('fax') as HTMLInputElement)?.value;
             const websiteVal = (document.getElementById('website_url') as HTMLInputElement)?.value;

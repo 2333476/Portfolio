@@ -160,7 +160,6 @@ export default function Testimonials() {
                     </p>
                     <motion.button
                         onClick={() => {
-                            setOpenTime(Date.now());
                             setIsModalOpen(true);
                         }}
                         whileHover={{ scale: 1.1 }}
